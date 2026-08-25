@@ -16,5 +16,10 @@ Recommended naming convention:
 
 For example: `01_vosk_checkpoint_validation_v1.ipynb`.
 
-Notebook outputs should be cleared before version control when they contain large tensors, audio, model logs, or duplicated tables. A notebook used for a thesis result should record its input hashes and write durable outputs into the corresponding versioned directory under `analysis/results/`.
+Current preserved notebook:
 
+- `01_asr/01_fleurs_asr_model_comparison_v1.ipynb`: original Colab workflow
+  used to evaluate Wav2Vec2, Whisper large-v3, NeMo RNNT/CTC, and Vosk on
+  FLEURS `fa_ir`.
+
+Notebook outputs should be cleared before version control when they contain large tensors, audio, model logs, or duplicated tables. A notebook used for a thesis result should record its input hashes and write durable outputs into the corresponding versioned directory under `analysis/results/`.

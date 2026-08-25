@@ -31,6 +31,7 @@ INCLUDE_TREES = [
     PROJECT_DIR / "analysis/reports",
     PROJECT_DIR / "analysis/manifests/historical_pre_restructure",
     PROJECT_DIR / "notebooks",
+    PROJECT_DIR / "qa",
 ]
 
 
