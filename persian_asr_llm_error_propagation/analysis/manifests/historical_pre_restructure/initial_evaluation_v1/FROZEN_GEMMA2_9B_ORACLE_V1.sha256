@@ -1,0 +1,10 @@
+264440b8dcffa3c2fa9c2b48b157ab5291aa39f1b8d7f170bce4e69b339537d3  results/fleurs_asr_qa_eval_input_v1.csv
+a0f8211252e29d15d19627eaf096b8f9c15e10290ebb5e711d5556acbe8fb153  llm/run_gemma2_9b_oracle.py
+286cc1990fc74d285524ab72c98dd356fff4f796ae61f8438693604eda49ee63  llm/gemma2_9b_oracle_predictions_v1.csv
+f2b445015ccb1ce2383834a4df53f168280447a9ed4c4f283915b78e43e50683  llm/gemma2_9b_oracle_predictions_v1.metadata.json
+e4b313271f2d994286f1c529dfd735744ad5b59bb71e2ce076865238b5846592  ../models/llm/gemma-2-9b-it-4bit/model.safetensors
+774620d45c0afe04b106d414667d2c76c928bae98085ddc3589fdb560014ceda  ../models/llm/gemma-2-9b-it-4bit/config.json
+4ebdb5448f194666939265b988d4e8f6437d970dcb271e6f3133ccb70df22798  ../models/llm/gemma-2-9b-it-4bit/generation_config.json
+3f289bc05132635a8bc7aca7aa21255efd5e18f3710f43e3cdb96bcd41be4922  ../models/llm/gemma-2-9b-it-4bit/tokenizer.json
+61a7b147390c64585d6c3543dd6fc636906c9af3865a5548f27f31aee1d4c8e2  ../models/llm/gemma-2-9b-it-4bit/tokenizer.model
+e5ac0f1cfb5f450763d368edacbb2448a3c02c8d8f7f98d963a820751fb0ddc3  ../models/llm/gemma-2-9b-it-4bit/tokenizer_config.json

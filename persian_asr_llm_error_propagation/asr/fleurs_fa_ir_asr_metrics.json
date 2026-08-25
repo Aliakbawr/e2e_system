@@ -1,0 +1,40 @@
+{
+  "scoring": {
+    "type": "corpus_level_icefall_kaldi_style",
+    "wer_tokens": "whitespace-separated words",
+    "cer_tokens": "characters_excluding_spaces",
+    "normalization": "normalize_persian_for_evaluation applied to both sides",
+    "reference_source": "reference_normalized (official FLEURS transcription)",
+    "hypothesis_source": "asr_raw"
+  },
+  "dataset": {
+    "recordings": 871,
+    "successful_recordings": 871,
+    "failed_recordings": 0,
+    "unique_file_names": 871,
+    "unique_semantic_ids": 324
+  },
+  "error_metrics": {
+    "WER": 0.44859030427095936,
+    "CER": 0.265781257622323,
+    "word_sub": 4181,
+    "word_del": 5345,
+    "word_ins": 116,
+    "char_sub": 2439,
+    "char_del": 18859,
+    "char_ins": 495,
+    "total_words": 21494,
+    "total_chars": 81996
+  },
+  "runtime": {
+    "total_audio_sec": 13321.86,
+    "total_audio_hours": 3.7005166666666667,
+    "total_latency_sec": 65.90419764699999,
+    "mean_latency_sec": 0.07566498007692306,
+    "median_latency_sec": 0.072069151,
+    "p95_latency_sec": 0.0951818385,
+    "mean_rtf": 0.005270172060849598,
+    "median_rtf": 0.004919635,
+    "aggregate_rtf": 0.004947071778790648
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "matched_recording_qa_rows": 769,
+  "matched_semantic_ids": 286,
+  "answer_in_reference_rate": 1.0,
+  "answer_preservation_rate_recordings": 0.15344603381014305,
+  "answer_preservation_rate_wilson_95ci": [
+    0.12970008526491655,
+    0.18063712048835223
+  ],
+  "answer_preserved_recordings": 118,
+  "answer_lost_recordings": 651,
+  "answer_preserved_token_span_recordings": 114,
+  "substring_vs_token_span_disagreements": 4,
+  "semantic_ids_answer_preserved_in_any_recording": 63,
+  "semantic_ids_answer_preserved_in_all_recordings": 26,
+  "critical_low_wer_answer_loss_count": 29,
+  "robust_high_wer_answer_survival_count": 19,
+  "wer_predicts_answer_loss_roc_auc": 0.7444088625061834,
+  "wer_answer_preserved_pearson_correlation": -0.32941972701267586,
+  "answer_preservation_by_wer_bin": [
+    {
+      "wer_bin": "<=0.10",
+      "recordings": 14,
+      "answer_preserved": 12,
+      "answer_preservation_rate": 0.8571428571428571
+    },
+    {
+      "wer_bin": "0.10-0.20",
+      "recordings": 44,
+      "answer_preserved": 17,
+      "answer_preservation_rate": 0.38636363636363635
+    },
+    {
+      "wer_bin": "0.20-0.30",
+      "recordings": 95,
+      "answer_preserved": 26,
+      "answer_preservation_rate": 0.2736842105263158
+    },
+    {
+      "wer_bin": "0.30-0.40",
+      "recordings": 141,
+      "answer_preserved": 25,
+      "answer_preservation_rate": 0.1773049645390071
+    },
+    {
+      "wer_bin": "0.40-0.50",
+      "recordings": 213,
+      "answer_preserved": 23,
+      "answer_preservation_rate": 0.107981220657277
+    },
+    {
+      "wer_bin": "0.50-0.60",
+      "recordings": 155,
+      "answer_preserved": 14,
+      "answer_preservation_rate": 0.09032258064516129
+    },
+    {
+      "wer_bin": "0.60-0.70",
+      "recordings": 76,
+      "answer_preserved": 0,
+      "answer_preservation_rate": 0.0
+    },
+    {
+      "wer_bin": ">0.70",
+      "recordings": 31,
+      "answer_preserved": 1,
+      "answer_preservation_rate": 0.03225806451612903
+    }
+  ],
+  "by_answer_preserved": {
+    "false": {
+      "recordings": 651,
+      "semantic_ids": 260,
+      "mean_wer": 0.46441240425960056,
+      "median_wer": 0.470588235,
+      "mean_cer": 0.2759470874562212,
+      "median_cer": 0.260273973
+    },
+    "true": {
+      "recordings": 118,
+      "semantic_ids": 63,
+      "mean_wer": 0.3198849744915255,
+      "median_wer": 0.3266666665,
+      "mean_cer": 0.16076750140677967,
+      "median_cer": 0.138095238
+    }
+  },
+  "source_hashes": {
+    "asr_checkpoint_sha256": "b41211ac8614bfd083777b8d82a272269251ce8865b11b2c7c44e8dd314c1c00",
+    "frozen_qa_sha256": "cc83e1a2fd6a9c8e291b02d6f0d08f57f026b2d67e6f309ea6db15fbe3b74635"
+  },
+  "output_sha256": "264440b8dcffa3c2fa9c2b48b157ab5291aa39f1b8d7f170bce4e69b339537d3",
+  "normalization": "normalize_persian in prepare_downstream_eval.py",
+  "answer_preserved_definition": "normalized gold answer is an exact substring of normalized ASR text",
+  "thresholds": {
+    "critical_low_wer_max": 0.2,
+    "robust_high_wer_min": 0.5
+  }
+}

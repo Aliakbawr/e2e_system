@@ -1,0 +1,78 @@
+{
+  "measure_name": "exact_answer_span_preservation_rate",
+  "interpretation": "Exact normalized gold string survival; this is an intermediate lexical measure, not semantic preservation or downstream QA accuracy.",
+  "unit_of_observation": "recording",
+  "dependency_structure": "Recordings are clustered by semantic id; each id shares one QA item.",
+  "recordings": 769,
+  "semantic_ids": 286,
+  "exact_spans_preserved": 118,
+  "exact_spans_lost": 651,
+  "recording_level_rate": 0.15344603381014305,
+  "descriptive_wilson_95ci_ignoring_clusters": [
+    0.12970008526491655,
+    0.18063712048835223
+  ],
+  "cluster_bootstrap": {
+    "mean": 0.15344603381014305,
+    "ci_low": 0.11810840869692349,
+    "ci_high": 0.1923567298574222,
+    "confidence_level": 0.95,
+    "bootstrap_resamples": 10000,
+    "seed": 42,
+    "clusters": 286,
+    "recordings": 769
+  },
+  "gold_answer_token_count": {
+    "minimum": 1,
+    "median": 3.0,
+    "mean": 3.8842652795838752,
+    "maximum": 13
+  },
+  "preservation_by_answer_length": [
+    {
+      "answer_length_bin": "1 token",
+      "recordings": 111,
+      "semantic_ids": 40,
+      "exact_spans_preserved": 32,
+      "exact_span_preservation_rate": 0.2882882882882883,
+      "cluster_bootstrap_ci_low": 0.15739379084967323,
+      "cluster_bootstrap_ci_high": 0.4260869565217391,
+      "mean_wer": 0.4112889445315314,
+      "median_wer": 0.4
+    },
+    {
+      "answer_length_bin": "2 tokens",
+      "recordings": 172,
+      "semantic_ids": 66,
+      "exact_spans_preserved": 41,
+      "exact_span_preservation_rate": 0.23837209302325582,
+      "cluster_bootstrap_ci_low": 0.1534090909090909,
+      "cluster_bootstrap_ci_high": 0.3313261923433378,
+      "mean_wer": 0.43368557390697676,
+      "median_wer": 0.44058823550000004
+    },
+    {
+      "answer_length_bin": "3-4 tokens",
+      "recordings": 252,
+      "semantic_ids": 94,
+      "exact_spans_preserved": 33,
+      "exact_span_preservation_rate": 0.13095238095238096,
+      "cluster_bootstrap_ci_low": 0.07562441643323996,
+      "cluster_bootstrap_ci_high": 0.19215686274509805,
+      "mean_wer": 0.4559570439722222,
+      "median_wer": 0.461538462
+    },
+    {
+      "answer_length_bin": "5+ tokens",
+      "recordings": 234,
+      "semantic_ids": 86,
+      "exact_spans_preserved": 12,
+      "exact_span_preservation_rate": 0.05128205128205128,
+      "cluster_bootstrap_ci_low": 0.01694915254237288,
+      "cluster_bootstrap_ci_high": 0.0944206008583691,
+      "mean_wer": 0.4484219466965812,
+      "median_wer": 0.466666667
+    }
+  ],
+  "input_sha256": "264440b8dcffa3c2fa9c2b48b157ab5291aa39f1b8d7f170bce4e69b339537d3"
+}

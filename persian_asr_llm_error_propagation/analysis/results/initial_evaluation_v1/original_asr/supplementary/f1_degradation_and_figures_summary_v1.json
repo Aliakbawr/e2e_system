@@ -1,0 +1,185 @@
+{
+  "all_769": {
+    "recordings": 769,
+    "semantic_ids": 286,
+    "mean_oracle_f1": {
+      "estimate": 0.8466282905747724,
+      "ci_low": 0.8141283795199302,
+      "ci_high": 0.8764543189006274,
+      "confidence_level": 0.95,
+      "bootstrap_resamples": 10000,
+      "finite_resamples": 10000,
+      "seed": 2026,
+      "clusters": 286,
+      "recordings": 769
+    },
+    "mean_asr_path_f1": {
+      "estimate": 0.3402234748803641,
+      "ci_low": 0.3044928018131492,
+      "ci_high": 0.3766705471602681,
+      "confidence_level": 0.95,
+      "bootstrap_resamples": 10000,
+      "finite_resamples": 10000,
+      "seed": 2027,
+      "clusters": 286,
+      "recordings": 769
+    },
+    "mean_delta_f1": {
+      "estimate": 0.5064048156944083,
+      "ci_low": 0.464770872501609,
+      "ci_high": 0.5488983449245778,
+      "confidence_level": 0.95,
+      "bootstrap_resamples": 10000,
+      "finite_resamples": 10000,
+      "seed": 2028,
+      "clusters": 286,
+      "recordings": 769
+    },
+    "median_delta_f1": 0.5,
+    "decreased": {
+      "count": 604,
+      "percentage": 0.7854356306892067
+    },
+    "unchanged": {
+      "count": 147,
+      "percentage": 0.19115734720416125
+    },
+    "increased": {
+      "count": 18,
+      "percentage": 0.02340702210663199
+    }
+  },
+  "primary_oracle_em_correct": {
+    "recordings": 470,
+    "semantic_ids": 174,
+    "mean_oracle_f1": {
+      "estimate": 1.0,
+      "ci_low": 1.0,
+      "ci_high": 1.0,
+      "confidence_level": 0.95,
+      "bootstrap_resamples": 10000,
+      "finite_resamples": 10000,
+      "seed": 2029,
+      "clusters": 174,
+      "recordings": 470
+    },
+    "mean_asr_path_f1": {
+      "estimate": 0.3677169351191489,
+      "ci_low": 0.31856017001916787,
+      "ci_high": 0.4168361850651785,
+      "confidence_level": 0.95,
+      "bootstrap_resamples": 10000,
+      "finite_resamples": 10000,
+      "seed": 2030,
+      "clusters": 174,
+      "recordings": 470
+    },
+    "mean_delta_f1": {
+      "estimate": 0.632283064880851,
+      "ci_low": 0.5841741749680666,
+      "ci_high": 0.6813312151713155,
+      "confidence_level": 0.95,
+      "bootstrap_resamples": 10000,
+      "finite_resamples": 10000,
+      "seed": 2031,
+      "clusters": 174,
+      "recordings": 470
+    },
+    "median_delta_f1": 0.666666667,
+    "decreased": {
+      "count": 401,
+      "percentage": 0.8531914893617021
+    },
+    "unchanged": {
+      "count": 69,
+      "percentage": 0.14680851063829786
+    },
+    "increased": {
+      "count": 0,
+      "percentage": 0.0
+    }
+  },
+  "by_answer_preserved": [
+    {
+      "answer_preserved": false,
+      "all_recordings": 651,
+      "all_semantic_ids": 260,
+      "all_mean_oracle_f1": 0.8597334362488479,
+      "all_mean_asr_path_f1": 0.2727560993701997,
+      "all_mean_delta_f1": {
+        "estimate": 0.5869773368786483,
+        "ci_low": 0.5460203871500283,
+        "ci_high": 0.6275460453602552,
+        "confidence_level": 0.95,
+        "bootstrap_resamples": 10000,
+        "finite_resamples": 10000,
+        "seed": 2036,
+        "clusters": 260,
+        "recordings": 651
+      },
+      "all_median_delta_f1": 0.6,
+      "primary_recordings": 398,
+      "primary_semantic_ids": 160,
+      "primary_mean_delta_f1": {
+        "estimate": 0.7209719849698492,
+        "ci_low": 0.6761981956970506,
+        "ci_high": 0.7652580800267391,
+        "confidence_level": 0.95,
+        "bootstrap_resamples": 10000,
+        "finite_resamples": 10000,
+        "seed": 2038,
+        "clusters": 160,
+        "recordings": 398
+      },
+      "primary_median_delta_f1": 1.0
+    },
+    {
+      "answer_preserved": true,
+      "all_recordings": 118,
+      "all_semantic_ids": 63,
+      "all_mean_oracle_f1": 0.7743278682542373,
+      "all_mean_asr_path_f1": 0.7124375550254238,
+      "all_mean_delta_f1": {
+        "estimate": 0.06189031322881356,
+        "ci_low": -0.004157870621114079,
+        "ci_high": 0.1416055331355712,
+        "confidence_level": 0.95,
+        "bootstrap_resamples": 10000,
+        "finite_resamples": 10000,
+        "seed": 2037,
+        "clusters": 63,
+        "recordings": 118
+      },
+      "all_median_delta_f1": 0.0,
+      "primary_recordings": 72,
+      "primary_semantic_ids": 40,
+      "primary_mean_delta_f1": {
+        "estimate": 0.14203042327777776,
+        "ci_low": 0.05428420523138833,
+        "ci_high": 0.25428029013509523,
+        "confidence_level": 0.95,
+        "bootstrap_resamples": 10000,
+        "finite_resamples": 10000,
+        "seed": 2039,
+        "clusters": 40,
+        "recordings": 72
+      },
+      "primary_median_delta_f1": 0.0
+    }
+  ],
+  "measure": "delta_f1 = oracle_f1 - asr_f1",
+  "source_hashes": {
+    "final_joined_sha256": "55a771a42a95bfbdc3277a945d697ccdba5847339ef2f9d1d24fd206c5906162",
+    "frozen_analysis_sha256": "a373bc3dceee345613fb2ae5983211664f7d1d3a6ee78e7b026bf90ab1b1c9e1"
+  },
+  "bootstrap": {
+    "resampling_unit": "semantic id",
+    "resamples": 10000,
+    "base_seed": 2026
+  },
+  "figure_data_hashes": {
+    "figure1_retention_by_answer_span_data_v1.csv": "34683a69cc0ad195fc3f171c4de7793d493079afade08c177f41e2fd22d5a5c2",
+    "figure2_roc_comparison_data_v1.csv": "48e3b9f74ff06d2c6733bf98ab0fc41c3a38fcc9d2f36e7fb4e0e45017ff878f",
+    "figure3_retention_by_wer_bin_data_v1.csv": "0677bcb59f4da4b2f1988b46003512ab78a4b57e521b6581ea8c7418f9957a5a"
+  }
+}

@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Official FLEURS audio is restored locally and is intentionally not versioned.
+data/test/
+data/test.tar.gz

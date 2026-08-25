@@ -1,0 +1,76 @@
+{
+  "evaluation": "nemo_paper_normalization_v1",
+  "normalizer": "nemo_paper_normalize exactly as supplied",
+  "skip_note": "SKIP is declared but unused because the supplied nemo_paper_normalize function does not reference it.",
+  "cer_spaces": "excluded",
+  "original_asr": {
+    "full_871": {
+      "WER": 0.4330363808291445,
+      "CER": 0.27759393808598903,
+      "word_sub": 4421,
+      "word_del": 4054,
+      "word_ins": 226,
+      "char_sub": 2441,
+      "char_del": 20243,
+      "char_ins": 469,
+      "total_words": 20093,
+      "total_chars": 83406
+    },
+    "matched_769": {
+      "WER": 0.4405029187247418,
+      "CER": 0.28080759005087924,
+      "word_sub": 3998,
+      "word_del": 3639,
+      "word_ins": 211,
+      "char_sub": 2206,
+      "char_del": 18172,
+      "char_ins": 429,
+      "total_words": 17816,
+      "total_chars": 74097
+    },
+    "mean_recording_wer_matched": 0.43109731819078584,
+    "mean_recording_cer_matched": 0.26783262438708083
+  },
+  "vosk": {
+    "full_871": {
+      "WER": 0.1674712586472901,
+      "CER": 0.06280123732105604,
+      "word_sub": 1872,
+      "word_del": 568,
+      "word_ins": 925,
+      "char_sub": 1426,
+      "char_del": 859,
+      "char_ins": 2953,
+      "total_words": 20093,
+      "total_chars": 83406
+    },
+    "matched_769": {
+      "WER": 0.1692299057027391,
+      "CER": 0.06226972751933277,
+      "word_sub": 1699,
+      "word_del": 488,
+      "word_ins": 828,
+      "char_sub": 1250,
+      "char_del": 692,
+      "char_ins": 2672,
+      "total_words": 17816,
+      "total_chars": 74097
+    },
+    "mean_recording_wer_matched": 0.1676570770418877,
+    "mean_recording_cer_matched": 0.06416602977253584
+  },
+  "source_hashes": {
+    "original_checkpoint": "b41211ac8614bfd083777b8d82a272269251ce8865b11b2c7c44e8dd314c1c00",
+    "vosk_checkpoint": "49b906e9838fd6b8c77635dfe97aeab7b82a5aeac73cff2bc0bee675f298f443",
+    "original_joined": "55a771a42a95bfbdc3277a945d697ccdba5847339ef2f9d1d24fd206c5906162",
+    "vosk_joined": "72f10807f7aaee2765f3e42b25eae3e146b5443503e62d7fd38c657f22301bd8"
+  },
+  "output_hashes": {
+    "original_recording_metrics": "22881fb68d1f15295baaf991994c44e13b8bf02eabadc8d7c700896a8bd85f8e",
+    "vosk_recording_metrics": "237ee7662d741cb3621c776cce90687784e68fbdb16deb9b2aa3e75d85c06ba1",
+    "original_joined": "178d2f4d5f7e87f1bf85906876539ec93bc6aedd728a40e278e1c5f1ad30091f",
+    "vosk_joined": "68c50bb49e4f4838ca869fa475d5f20fc4a8c03e344ae0404a392d7ac0516894",
+    "original_predictions": "0f234c91e46a8bae00d5dfa774025ef844239dfba7df4bbfbfac02ff8ef36398",
+    "vosk_predictions": "69709eccab12311937af97ded672f6d29c026cd478b3d6a036b37ac658289652"
+  }
+}

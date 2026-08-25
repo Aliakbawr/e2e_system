@@ -1,0 +1,277 @@
+{
+  "primary_definition": "oracle_em == 1",
+  "all_recordings": 769,
+  "all_semantic_ids": 286,
+  "primary_recordings": 470,
+  "primary_semantic_ids": 174,
+  "retention": {
+    "estimate": 0.14680851063829786,
+    "ci_low": 0.10191082802547771,
+    "ci_high": 0.19480519480519481,
+    "confidence_level": 0.95,
+    "bootstrap_resamples": 10000,
+    "finite_resamples": 10000,
+    "seed": 42,
+    "clusters": 174,
+    "recordings": 470
+  },
+  "propagation_failure": {
+    "estimate": 0.8531914893617021,
+    "ci_low": 0.8051948051948052,
+    "ci_high": 0.8980891719745223,
+    "confidence_level": 0.95,
+    "bootstrap_resamples": 10000,
+    "finite_resamples": 10000,
+    "seed": 42,
+    "clusters": 174,
+    "recordings": 470,
+    "derived_as": "1 - retention"
+  },
+  "delta_f1_all_769": {
+    "distribution": {
+      "mean": 0.5064048156944083,
+      "std": 0.402531475641481,
+      "min": -1.0,
+      "q25": 0.142857143,
+      "median": 0.5,
+      "q75": 1.0,
+      "max": 1.0
+    },
+    "cluster_bootstrap_mean": {
+      "estimate": 0.5064048156944083,
+      "ci_low": 0.4645859112767554,
+      "ci_high": 0.5481239422870569,
+      "confidence_level": 0.95,
+      "bootstrap_resamples": 10000,
+      "finite_resamples": 10000,
+      "seed": 44,
+      "clusters": 286,
+      "recordings": 769
+    },
+    "asr_better_count_delta_below_zero": 18,
+    "no_change_count": 147,
+    "asr_worse_count_delta_above_zero": 604
+  },
+  "delta_f1_primary": {
+    "distribution": {
+      "mean": 0.6322830648808511,
+      "std": 0.3840758819372788,
+      "min": 0.0,
+      "q25": 0.333333333,
+      "median": 0.666666667,
+      "q75": 1.0,
+      "max": 1.0
+    },
+    "cluster_bootstrap_mean": {
+      "estimate": 0.6322830648808511,
+      "ci_low": 0.5820920268011366,
+      "ci_high": 0.6810040076909657,
+      "confidence_level": 0.95,
+      "bootstrap_resamples": 10000,
+      "finite_resamples": 10000,
+      "seed": 45,
+      "clusters": 174,
+      "recordings": 470
+    }
+  },
+  "answer_preservation_primary_table": [
+    {
+      "answer_preserved": false,
+      "oracle_correct_recordings": 398,
+      "semantic_ids": 160,
+      "asr_em": 0.03015075376884422,
+      "propagation_failure": 0.9698492462311558,
+      "mean_wer": 0.45997529610733084
+    },
+    {
+      "answer_preserved": true,
+      "oracle_correct_recordings": 72,
+      "semantic_ids": 40,
+      "asr_em": 0.7916666666666666,
+      "propagation_failure": 0.20833333333333334,
+      "mean_wer": 0.29491259013057364
+    }
+  ],
+  "predictor_auc": {
+    "wer_to_propagation_failure": {
+      "estimate": 0.7710795475080415,
+      "ci_low": 0.6954998455671684,
+      "ci_high": 0.8433910134133558,
+      "confidence_level": 0.95,
+      "bootstrap_resamples": 10000,
+      "finite_resamples": 10000,
+      "seed": 46,
+      "clusters": 174,
+      "recordings": 470
+    },
+    "one_minus_answer_preserved_to_propagation_failure": {
+      "estimate": 0.8943402363656077,
+      "ci_low": 0.8291253213532469,
+      "ci_high": 0.9496944236275244,
+      "confidence_level": 0.95,
+      "bootstrap_resamples": 10000,
+      "finite_resamples": 10000,
+      "seed": 47,
+      "clusters": 174,
+      "recordings": 470
+    }
+  },
+  "adjusted_logistic_model": {
+    "outcome": "propagation_failure",
+    "recordings": 470,
+    "clusters": 174,
+    "bootstrap_resamples": 10000,
+    "seed": 48,
+    "predictors": {
+      "intercept": {
+        "coefficient": 1.7407206556101409,
+        "odds_ratio": 5.701450724969902,
+        "coefficient_ci_low": -0.8331051407512543,
+        "coefficient_ci_high": 3.8879777312679664,
+        "odds_ratio_ci_low": 0.43469739191047246,
+        "odds_ratio_ci_high": 48.81207551214301,
+        "finite_resamples": 10000
+      },
+      "wer": {
+        "coefficient": 3.3522902127708782,
+        "odds_ratio": 28.568085774941153,
+        "coefficient_ci_low": 0.36246940891612406,
+        "coefficient_ci_high": 8.064378298039374,
+        "odds_ratio_ci_low": 1.4368732648032314,
+        "odds_ratio_ci_high": 3179.179100776693,
+        "finite_resamples": 10000
+      },
+      "answer_preserved": {
+        "coefficient": -4.336288271036813,
+        "odds_ratio": 0.013085006175640122,
+        "coefficient_ci_low": -6.117916456014774,
+        "coefficient_ci_high": -3.4392825280912214,
+        "odds_ratio_ci_low": 0.0022030413179766487,
+        "odds_ratio_ci_high": 0.03208769909372537,
+        "finite_resamples": 10000
+      },
+      "gold_answer_token_count": {
+        "coefficient": 0.08892430274747701,
+        "odds_ratio": 1.0929979162554977,
+        "coefficient_ci_low": -0.25249355371717924,
+        "coefficient_ci_high": 0.9100144792363267,
+        "odds_ratio_ci_low": 0.7768612206903134,
+        "odds_ratio_ci_high": 2.4843585047383074,
+        "finite_resamples": 10000
+      }
+    },
+    "descriptive_in_sample_auc": 0.916332357512017
+  },
+  "exploratory_interaction_model": {
+    "outcome": "propagation_failure",
+    "recordings": 470,
+    "clusters": 174,
+    "bootstrap_resamples": 10000,
+    "seed": 49,
+    "predictors": {
+      "intercept": {
+        "coefficient": 1.8028961898839415,
+        "odds_ratio": 6.067193788679456,
+        "coefficient_ci_low": -0.6758757651046896,
+        "coefficient_ci_high": 4.000510136445339,
+        "odds_ratio_ci_low": 0.508710714377021,
+        "odds_ratio_ci_high": 54.62600964482168,
+        "finite_resamples": 10000
+      },
+      "wer": {
+        "coefficient": 3.182884497029232,
+        "odds_ratio": 24.116216475883977,
+        "coefficient_ci_low": -0.5876380953579751,
+        "coefficient_ci_high": 8.869118568593834,
+        "odds_ratio_ci_low": 0.5556381003228584,
+        "odds_ratio_ci_high": 7109.012104251173,
+        "finite_resamples": 10000
+      },
+      "answer_preserved": {
+        "coefficient": -4.4591070058742295,
+        "odds_ratio": 0.011572693021473719,
+        "coefficient_ci_low": -9.440668948798166,
+        "coefficient_ci_high": -2.1290601707137258,
+        "odds_ratio_ci_low": 7.942725800625751e-05,
+        "odds_ratio_ci_high": 0.11894903312116757,
+        "finite_resamples": 10000
+      },
+      "gold_answer_token_count": {
+        "coefficient": 0.09023363224643309,
+        "odds_ratio": 1.0944299479656465,
+        "coefficient_ci_low": -0.259526128144356,
+        "coefficient_ci_high": 0.9970315932869745,
+        "odds_ratio_ci_low": 0.7714170520345699,
+        "odds_ratio_ci_high": 2.7102248265769364,
+        "finite_resamples": 10000
+      },
+      "wer_x_answer_preserved": {
+        "coefficient": 0.34233155064403265,
+        "odds_ratio": 1.4082271187305482,
+        "coefficient_ci_low": -7.093377477512945,
+        "coefficient_ci_high": 10.772118876206028,
+        "odds_ratio_ci_low": 0.000830587332827526,
+        "odds_ratio_ci_high": 47672.92359574937,
+        "finite_resamples": 10000
+      }
+    },
+    "descriptive_in_sample_auc": 0.9161877913910875
+  },
+  "wer_cer_pearson_correlation_primary": 0.8095585383235187,
+  "predefined_wer_bins": [
+    {
+      "wer_bin": "0–10%",
+      "recordings": 10,
+      "semantic_ids": 8,
+      "downstream_retention": 0.7,
+      "propagation_failure": 0.3
+    },
+    {
+      "wer_bin": "10–20%",
+      "recordings": 30,
+      "semantic_ids": 18,
+      "downstream_retention": 0.4,
+      "propagation_failure": 0.6
+    },
+    {
+      "wer_bin": "20–30%",
+      "recordings": 60,
+      "semantic_ids": 42,
+      "downstream_retention": 0.26666666666666666,
+      "propagation_failure": 0.7333333333333333
+    },
+    {
+      "wer_bin": "30–50%",
+      "recordings": 212,
+      "semantic_ids": 120,
+      "downstream_retention": 0.12264150943396226,
+      "propagation_failure": 0.8773584905660378
+    },
+    {
+      "wer_bin": "50–100%",
+      "recordings": 157,
+      "semantic_ids": 88,
+      "downstream_retention": 0.050955414012738856,
+      "propagation_failure": 0.9490445859872612
+    },
+    {
+      "wer_bin": ">100%",
+      "recordings": 1,
+      "semantic_ids": 1,
+      "downstream_retention": 0.0,
+      "propagation_failure": 1.0
+    }
+  ],
+  "bootstrap_note": "All reported bootstrap intervals resample semantic IDs and retain all recordings belonging to each sampled ID.",
+  "qualitative_group_counts": {
+    "low_wer_failure": 21,
+    "high_wer_success": 8,
+    "answer_lost_llm_correct": 12,
+    "answer_preserved_llm_failure": 15
+  },
+  "source_hashes": {
+    "asr_predictions_sha256": "0f234c91e46a8bae00d5dfa774025ef844239dfba7df4bbfbfac02ff8ef36398",
+    "oracle_predictions_sha256": "286cc1990fc74d285524ab72c98dd356fff4f796ae61f8438693604eda49ee63"
+  },
+  "final_joined_sha256": "8157b488679c071580c8e1b8e123ac0c1c87320e068e897af3b99ee3387c862b"
+}

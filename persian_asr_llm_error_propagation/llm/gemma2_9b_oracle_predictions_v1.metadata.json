@@ -1,0 +1,37 @@
+{
+  "stage": "gemma2_9b_oracle_v1",
+  "condition": "oracle",
+  "calls_expected": 286,
+  "calls_recorded": 286,
+  "successful": 286,
+  "failed": 0,
+  "model": "Gemma 2 9B IT, local NF4 4-bit archive",
+  "model_path": "/home/aliakbar/projects/e2e_system/models/llm/gemma-2-9b-it-4bit",
+  "model_directory_sha256": "1426fbad4c6fcb5c980cfba84c456e859a79e4d1134eea8fe9938b29698baff7",
+  "input_path": "/home/aliakbar/projects/e2e_system/persian_asr_llm_error_propagation/results/fleurs_asr_qa_eval_input_v1.csv",
+  "input_sha256": "264440b8dcffa3c2fa9c2b48b157ab5291aa39f1b8d7f170bce4e69b339537d3",
+  "output_path": "/home/aliakbar/projects/e2e_system/persian_asr_llm_error_propagation/llm/gemma2_9b_oracle_predictions_v1.csv",
+  "output_sha256": "286cc1990fc74d285524ab72c98dd356fff4f796ae61f8438693604eda49ee63",
+  "prompt_template_sha256": "849c716d847c5666e18d26e658ffee0d6c0b6d51576cd3f7d6940560742347bc",
+  "prompt_template": "متن زیر تنها منبع اطلاعات شماست.\n\nفقط بر اساس اطلاعات موجود در متن به سؤال پاسخ دهید.\nاز اطلاعات خارج از متن استفاده نکنید و حدس نزنید.\n\nپاسخ را تا حد امکان کوتاه و مستقیم بنویسید.\nاگر پاسخ از متن قابل تعیین نیست، فقط بنویسید:\nنامشخص\n\nمتن:\n{context}\n\nسؤال:\n{question}\n\nپاسخ:",
+  "context_column": "reference_normalized",
+  "question_column": "question",
+  "generation": {
+    "chat_template": true,
+    "add_generation_prompt": true,
+    "do_sample": false,
+    "max_new_tokens": 150,
+    "input_max_length": 2048,
+    "pad_token_id": "tokenizer.eos_token_id"
+  },
+  "scoring": {
+    "normalizer": "normalize_persian_qa in run_gemma2_9b_oracle.py",
+    "em": "exact equality after normalization",
+    "f1": "whitespace-token multiset overlap after normalization",
+    "oracle_correct_definition_for_propagation": "oracle_em == 1"
+  },
+  "descriptive_metrics": {
+    "oracle_em_rate": 0.6083916083916084,
+    "oracle_mean_f1": 0.8484719707272728
+  }
+}

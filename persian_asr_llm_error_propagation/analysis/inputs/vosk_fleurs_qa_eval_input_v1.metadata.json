@@ -1,0 +1,39 @@
+{
+  "stage": "vosk_fleurs_qa_eval_input_v1",
+  "condition": "vosk_asr_path",
+  "recordings": 769,
+  "semantic_ids": 286,
+  "answer_preserved_recordings": 507,
+  "answer_preservation_rate": 0.659297789336801,
+  "mean_recording_wer": 0.1287965196771983,
+  "mean_recording_cer": 0.058815376019579965,
+  "corpus_metrics_full_871": {
+    "WER": 0.12794268167860798,
+    "CER": 0.054844138738475046,
+    "word_sub": 1399,
+    "word_del": 306,
+    "word_ins": 1045,
+    "char_sub": 1436,
+    "char_del": 669,
+    "char_ins": 2392,
+    "total_words": 21494,
+    "total_chars": 81996
+  },
+  "corpus_metrics_matched_769": {
+    "WER": 0.12740157480314962,
+    "CER": 0.05428665550278639,
+    "word_sub": 1259,
+    "word_del": 244,
+    "word_ins": 924,
+    "char_sub": 1262,
+    "char_del": 521,
+    "char_ins": 2172,
+    "total_words": 19050,
+    "total_chars": 72854
+  },
+  "vosk_checkpoint_sha256": "49b906e9838fd6b8c77635dfe97aeab7b82a5aeac73cff2bc0bee675f298f443",
+  "frozen_qa_table_sha256": "264440b8dcffa3c2fa9c2b48b157ab5291aa39f1b8d7f170bce4e69b339537d3",
+  "output_sha256": "a365c9eff00c0fa6e18c24015c331bcd1de1ee0071cbd40f3f0917ce4b8aff45",
+  "normalization": "frozen normalize_persian_for_evaluation",
+  "qa_source": "unchanged rows from frozen fleurs_asr_qa_eval_input_v1.csv"
+}

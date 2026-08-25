@@ -1,0 +1,53 @@
+{
+  "analysis": "paired_delta_auc_v1",
+  "interpretation": "Positive delta_auc means answer-span loss discriminates downstream propagation failure better than WER. Each delta is calculated within the same semantic-ID bootstrap sample.",
+  "original_asr": {
+    "condition": "original_asr",
+    "primary_recordings": 470,
+    "primary_semantic_ids": 174,
+    "outcome": "propagation_failure among oracle_em == 1 recordings",
+    "predictor_1": "wer",
+    "predictor_2": "answer_span_loss = 1 - answer_preserved",
+    "auc_wer": 0.7632910477429614,
+    "auc_answer_span_loss": 0.8943402363656077,
+    "delta_auc_definition": "AUC(answer_span_loss) - AUC(WER)",
+    "delta_auc": 0.13104918862264625,
+    "delta_auc_ci_low": 0.047823988970588156,
+    "delta_auc_ci_high": 0.21782602316148356,
+    "confidence_level": 0.95,
+    "bootstrap_resamples": 10000,
+    "finite_resamples": 10000,
+    "seed": 271828,
+    "resampling_unit": "semantic id",
+    "recordings_retained_per_sampled_id": true,
+    "bootstrap_probability_delta_auc_gt_zero": 0.9993
+  },
+  "vosk": {
+    "condition": "vosk",
+    "primary_recordings": 470,
+    "primary_semantic_ids": 174,
+    "outcome": "propagation_failure among oracle_em == 1 recordings",
+    "predictor_1": "wer",
+    "predictor_2": "answer_span_loss = 1 - answer_preserved",
+    "auc_wer": 0.8045297452625039,
+    "auc_answer_span_loss": 0.9421986641814228,
+    "delta_auc_definition": "AUC(answer_span_loss) - AUC(WER)",
+    "delta_auc": 0.13766891891891897,
+    "delta_auc_ci_low": 0.08948667326179821,
+    "delta_auc_ci_high": 0.1888709193836296,
+    "confidence_level": 0.95,
+    "bootstrap_resamples": 10000,
+    "finite_resamples": 10000,
+    "seed": 271829,
+    "resampling_unit": "semantic id",
+    "recordings_retained_per_sampled_id": true,
+    "bootstrap_probability_delta_auc_gt_zero": 1.0
+  },
+  "source_hashes": {
+    "original_final_joined_sha256": "55a771a42a95bfbdc3277a945d697ccdba5847339ef2f9d1d24fd206c5906162",
+    "vosk_final_joined_sha256": "72f10807f7aaee2765f3e42b25eae3e146b5443503e62d7fd38c657f22301bd8"
+  },
+  "output_artifacts": {
+    "bootstrap_replicates_sha256": "6283835d5f2866859ba3217fb0bce591bfdb7e373eb6c5fb941294650f73a0e3"
+  }
+}
