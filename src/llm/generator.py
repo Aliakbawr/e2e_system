@@ -9,7 +9,8 @@ from transformers import (
 
 from config.settings import (
     LLM_MODEL_PATH,
-    MAX_LLM_TOKENS
+    MAX_LLM_TOKENS,
+    MAX_LLM_INPUT_TOKENS,
 )
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -45,7 +46,53 @@ def clean_answer(text):
 
 
 
-def generate_answer(question):
+SYSTEM_INSTRUCTIONS = """شما یک دستیار گفتگومحور فارسی هستید.
+
+قوانین:
+- فقط فارسی جواب بده.
+- کوتاه و مرتبط جواب بده.
+- برای فهم ارجاع‌ها و پرسش‌های ادامه‌دار از تاریخچه گفتگو استفاده کن.
+- اگر کاربر نظر شخصی خواست، با لحن مناسب پاسخ بده.
+- اگر سؤال مبهم است یا پاسخ را نمی‌دانی، صادقانه بگو."""
+
+
+def _build_messages(question, history=None):
+    """Build a Gemma-compatible alternating conversation."""
+    messages = [dict(message) for message in (history or [])]
+    messages.append({"role": "user", "content": str(question).strip()})
+
+    # Gemma 2's standard template expects alternating user/model roles and may
+    # reject a separate system role. Put the instructions in the first user
+    # message without modifying the session's stored copy.
+    messages[0]["content"] = (
+        f"{SYSTEM_INSTRUCTIONS}\n\n"
+        f"پیام کاربر:\n{messages[0]['content']}"
+    )
+    return messages
+
+
+def _render_with_recent_history(question, history=None):
+    """Render a prompt, dropping oldest complete turns if it is too large."""
+    retained_history = list(history or [])
+
+    # History consists of complete user/assistant pairs. Removing two entries
+    # maintains the role alternation required by Gemma's chat template.
+    while True:
+        messages = _build_messages(question, retained_history)
+        text = tokenizer.apply_chat_template(
+            messages,
+            tokenize=False,
+            add_generation_prompt=True,
+        )
+        token_count = len(tokenizer.encode(text, add_special_tokens=False))
+
+        if token_count <= MAX_LLM_INPUT_TOKENS or len(retained_history) < 2:
+            return text
+
+        retained_history = retained_history[2:]
+
+
+def generate_answer(question, history=None):
 
 
     if not question or not str(question).strip():
@@ -56,42 +103,14 @@ def generate_answer(question):
             "tokens":0
         }
 
-
-
-    prompt = f"""
-شما یک سامانه پرسش و پاسخ فارسی هستید.
-
-قوانین:
-- فقط فارسی جواب بده.
-- کوتاه جواب بده.
--اگر سوال نظر شخصی داشت، با لحن مناسب پاسخ بدهید.
--اگر پاسخ را نمی‌دانی صادقانه بگو.
-
-سوال:
-{question}
-"""
-
-
-    messages = [
-        {
-            "role":"user",
-            "content":prompt
-        }
-    ]
-
-
-    text = tokenizer.apply_chat_template(
-        messages,
-        tokenize=False,
-        add_generation_prompt=True
-    )
+    text = _render_with_recent_history(question, history)
 
 
     inputs = tokenizer(
         text,
         return_tensors="pt",
         truncation=True,
-        max_length=2048
+        max_length=MAX_LLM_INPUT_TOKENS
     ).to(
         llm_model.device
     )

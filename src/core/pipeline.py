@@ -7,7 +7,7 @@ from src.llm.generator import generate_answer
 from src.tts.synthesizer import synthesize_speech
 
 
-def chat(audio_path):
+def chat(audio_path, session=None):
 
     metrics = {}
 
@@ -71,10 +71,14 @@ def chat(audio_path):
     # =====================
 
     llm_result = generate_answer(
-        question
+        question,
+        history=session.messages() if session is not None else None,
     )
 
     answer = llm_result["answer"]
+
+    if session is not None and answer:
+        session.add_turn(question, answer)
 
 
     print("\nBOT:")

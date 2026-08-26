@@ -65,5 +65,10 @@ The defaults live in `config/settings.py`. These environment variables can overr
 - `PERSIAN_ASSISTANT_MIC_DEVICE`
 - `PERSIAN_ASSISTANT_AUDIO_PLAYER`
 - `PERSIAN_ASSISTANT_MAX_LLM_TOKENS`
+- `PERSIAN_ASSISTANT_MAX_LLM_INPUT_TOKENS`
+
+The interactive chat commands keep the six most recent completed conversation
+turns in memory. This enables basic follow-up questions and pronoun references.
+The session is in-memory only and is cleared when the process exits.
 
 Large model files, generated WAV files, caches, and IDE metadata are deliberately excluded from version control.

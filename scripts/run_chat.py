@@ -1,8 +1,11 @@
 from src.audio.microphone import record_until_enter
 from src.core.pipeline import chat
+from src.core.session import ChatSession
 
 
 def main():
+    session = ChatSession()
+
     while True:
 
         try:
@@ -12,7 +15,8 @@ def main():
                 continue
 
             result = chat(
-                audio_path
+                audio_path,
+                session=session,
             )
 
 
