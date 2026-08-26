@@ -60,6 +60,9 @@ The defaults live in `config/settings.py`. These environment variables can overr
 - `PERSIAN_ASSISTANT_ASR_MODEL_PATH`
 - `PERSIAN_ASSISTANT_VOSK_LOG_LEVEL`
 - `PERSIAN_ASSISTANT_ASR_MAX_ALTERNATIVES` (default: `3`)
+- `PERSIAN_ASSISTANT_ASR_WORD_CONFIDENCE_THRESHOLD` (default: `0.65`)
+- `PERSIAN_ASSISTANT_ASR_ALTERNATIVE_SCORE_GAP` (default: `3.0`)
+- `PERSIAN_ASSISTANT_ASR_CLARIFICATION_MAX_OPTIONS` (default: `2`)
 - `PERSIAN_ASSISTANT_LLM_MODEL_PATH`
 - `PERSIAN_ASSISTANT_TTS_MODEL_PATH`
 - `PERSIAN_ASSISTANT_TTS_CONFIG_PATH`
@@ -80,6 +83,10 @@ ASR results include Vosk word confidence and up to three transcript hypotheses.
 Vosk exposes those through two different decoding modes, so requesting more than
 one alternative performs a second decoding pass. Set
 `PERSIAN_ASSISTANT_ASR_MAX_ALTERNATIVES=1` when lower latency is preferred.
+
+When a word is below the confidence threshold and plausible alternatives differ
+at that position, the assistant asks a targeted clarification before invoking
+the LLM. Orthographic variants such as `آدرس` and `ادرس` are treated as equal.
 
 Runtime events are printed to the console and written to a rotating UTF-8 log.
 To monitor ASR confidence, alternatives, session size, stage latency, and errors:
