@@ -7,6 +7,15 @@ MODELS_DIR = BASE_DIR / "models"
 DATA_DIR = BASE_DIR / "data"
 AUDIO_INPUT_DIR = DATA_DIR / "audio_in"
 AUDIO_OUTPUT_DIR = DATA_DIR / "audio_out"
+LOG_FILE = Path(
+    os.getenv(
+        "PERSIAN_ASSISTANT_LOG_FILE",
+        str(DATA_DIR / "logs/chatbot.log"),
+    )
+).expanduser()
+LOG_LEVEL = os.getenv("PERSIAN_ASSISTANT_LOG_LEVEL", "INFO")
+LOG_MAX_BYTES = int(os.getenv("PERSIAN_ASSISTANT_LOG_MAX_BYTES", "5242880"))
+LOG_BACKUP_COUNT = int(os.getenv("PERSIAN_ASSISTANT_LOG_BACKUP_COUNT", "3"))
 
 # Numba (used by librosa) and Matplotlib try to cache compiled/config
 # files during import.  Keep those caches in a writable location so model
@@ -22,6 +31,10 @@ AUDIO_PLAYER = os.getenv("PERSIAN_ASSISTANT_AUDIO_PLAYER", "paplay")
 # ASR (Vosk)
 ASR_MODEL_NAME = "vosk-model-fa-0.42"
 ASR_LOG_LEVEL = int(os.getenv("PERSIAN_ASSISTANT_VOSK_LOG_LEVEL", "-1"))
+ASR_MAX_ALTERNATIVES = max(
+    1,
+    int(os.getenv("PERSIAN_ASSISTANT_ASR_MAX_ALTERNATIVES", "3")),
+)
 
 ASR_MODEL_PATH = os.getenv(
     "PERSIAN_ASSISTANT_ASR_MODEL_PATH",

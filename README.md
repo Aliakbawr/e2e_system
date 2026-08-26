@@ -59,6 +59,7 @@ The defaults live in `config/settings.py`. These environment variables can overr
 
 - `PERSIAN_ASSISTANT_ASR_MODEL_PATH`
 - `PERSIAN_ASSISTANT_VOSK_LOG_LEVEL`
+- `PERSIAN_ASSISTANT_ASR_MAX_ALTERNATIVES` (default: `3`)
 - `PERSIAN_ASSISTANT_LLM_MODEL_PATH`
 - `PERSIAN_ASSISTANT_TTS_MODEL_PATH`
 - `PERSIAN_ASSISTANT_TTS_CONFIG_PATH`
@@ -66,9 +67,28 @@ The defaults live in `config/settings.py`. These environment variables can overr
 - `PERSIAN_ASSISTANT_AUDIO_PLAYER`
 - `PERSIAN_ASSISTANT_MAX_LLM_TOKENS`
 - `PERSIAN_ASSISTANT_MAX_LLM_INPUT_TOKENS`
+- `PERSIAN_ASSISTANT_LOG_LEVEL` (default: `INFO`)
+- `PERSIAN_ASSISTANT_LOG_FILE` (default: `data/logs/chatbot.log`)
+- `PERSIAN_ASSISTANT_LOG_MAX_BYTES` (default: `5242880`)
+- `PERSIAN_ASSISTANT_LOG_BACKUP_COUNT` (default: `3`)
 
 The interactive chat commands keep the six most recent completed conversation
 turns in memory. This enables basic follow-up questions and pronoun references.
 The session is in-memory only and is cleared when the process exits.
+
+ASR results include Vosk word confidence and up to three transcript hypotheses.
+Vosk exposes those through two different decoding modes, so requesting more than
+one alternative performs a second decoding pass. Set
+`PERSIAN_ASSISTANT_ASR_MAX_ALTERNATIVES=1` when lower latency is preferred.
+
+Runtime events are printed to the console and written to a rotating UTF-8 log.
+To monitor ASR confidence, alternatives, session size, stage latency, and errors:
+
+```bash
+tail -f data/logs/chatbot.log
+```
+
+Logs contain recognized speech and generated answers. Treat them as local
+conversation data and remove or relocate the log when privacy requires it.
 
 Large model files, generated WAV files, caches, and IDE metadata are deliberately excluded from version control.

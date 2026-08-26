@@ -1,15 +1,57 @@
+import logging
 import time
 
 from config.settings import AUDIO_OUTPUT_DIR
-from src.asr.transcriber import transcribe_audio
+from src.asr.transcriber import transcribe_audio_detailed
 from src.audio.player import play_audio
 from src.llm.generator import generate_answer
 from src.tts.synthesizer import synthesize_speech
 
 
+logger = logging.getLogger(__name__)
+
+
+def _log_asr_result(transcription, elapsed):
+    scored_words = [
+        (word.text, word.confidence)
+        for word in transcription.words
+        if word.confidence is not None
+    ]
+    lowest_confidence_words = sorted(scored_words, key=lambda item: item[1])[:5]
+    alternatives = [
+        {
+            "text": alternative.text,
+            "decoder_score": alternative.decoder_score,
+        }
+        for alternative in transcription.alternatives
+    ]
+
+    logger.info(
+        "asr_completed duration_sec=%.3f mean_word_confidence=%s "
+        "word_count=%d alternative_count=%d transcript=%r",
+        elapsed,
+        (
+            f"{transcription.mean_word_confidence:.4f}"
+            if transcription.mean_word_confidence is not None
+            else "unavailable"
+        ),
+        len(transcription.words),
+        len(transcription.alternatives),
+        transcription.text,
+    )
+    logger.info("asr_lowest_confidence_words values=%s", lowest_confidence_words)
+    logger.info("asr_alternatives values=%s", alternatives)
+
+
 def chat(audio_path, session=None):
 
     metrics = {}
+
+    logger.info(
+        "chat_turn_started audio_path=%s retained_session_turns=%d",
+        audio_path,
+        len(session) if session is not None else 0,
+    )
 
     AUDIO_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -20,11 +62,16 @@ def chat(audio_path, session=None):
 
     start = time.time()
 
-    question = transcribe_audio(
+    transcription = transcribe_audio_detailed(
         audio_path
     )
+    question = transcription.text
+    asr_details = transcription.to_dict()
 
     metrics["asr_time"] = time.time() - start
+    metrics["asr_mean_word_confidence"] = transcription.mean_word_confidence
+    metrics["asr_alternative_count"] = len(transcription.alternatives)
+    _log_asr_result(transcription, metrics["asr_time"])
 
 
     print("\nUSER:")
@@ -36,6 +83,8 @@ def chat(audio_path, session=None):
     # =====================
 
     if not question.strip():
+
+        logger.warning("asr_empty_transcript action=request_retry")
 
         answer = (
             "I did not receive any speech. "
@@ -53,6 +102,13 @@ def chat(audio_path, session=None):
             tts_result["tts_time"]
         )
 
+        logger.info(
+            "tts_completed duration_sec=%.3f audio_duration_sec=%.3f rtf=%.3f",
+            metrics["tts_time"],
+            tts_result["audio_duration"],
+            tts_result["tts_rtf"],
+        )
+
         play_audio(
             str(output_audio)
         )
@@ -60,6 +116,7 @@ def chat(audio_path, session=None):
 
         return {
             "question": question,
+            "asr": asr_details,
             "answer": answer,
             "audio": str(output_audio),
             "metrics": metrics
@@ -89,6 +146,15 @@ def chat(audio_path, session=None):
         llm_result["latency"]
     )
 
+    logger.info(
+        "llm_completed duration_sec=%.3f output_tokens=%d "
+        "retained_session_turns=%d answer=%r",
+        metrics["llm_time"],
+        llm_result["tokens"],
+        len(session) if session is not None else 0,
+        answer,
+    )
+
 
     # =====================
     # TTS
@@ -107,6 +173,13 @@ def chat(audio_path, session=None):
         tts_result["tts_time"]
     )
 
+    logger.info(
+        "tts_completed duration_sec=%.3f audio_duration_sec=%.3f rtf=%.3f",
+        metrics["tts_time"],
+        tts_result["audio_duration"],
+        tts_result["tts_rtf"],
+    )
+
 
     # =====================
     # Audio playback
@@ -116,10 +189,14 @@ def chat(audio_path, session=None):
         str(output_audio)
     )
 
+    logger.info("chat_turn_completed metrics=%s", metrics)
+
 
     return {
 
         "question": question,
+
+        "asr": asr_details,
 
         "answer": answer,
 
