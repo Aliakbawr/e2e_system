@@ -22,6 +22,7 @@ Research evaluations are isolated under [`benchmark/`](benchmark/README.md). The
 | `scripts/` | Alternate and diagnostic entry points |
 | `models/` | Local model installation locations; weights are not versioned |
 | `data/` | Runtime input/output locations; generated audio is not versioned |
+| `report/` | XeLaTeX sources for the bachelor final-project report |
 
 ## Setup
 

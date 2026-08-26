@@ -1,0 +1,62 @@
+% !TEX root = ../main.tex
+
+\chapter{نمونه جریان اجرای سامانه}
+
+\section{جریان یک نوبت مکالمه}
+
+جریان ساده‌شده اجرای یک نوبت مکالمه به‌صورت زیر است:
+
+\begin{latin}\begin{verbatim}
+1. Receive user audio
+2. Detect / prepare speech
+3. Run \lr{ASR}
+4. Normalize transcription
+5. Add conversation context
+6. Run \lr{LLM}
+7. Normalize response for \lr{TTS}
+8. Run \lr{TTS}
+9. Play generated audio
+10. Record latency and logs
+\end{verbatim}\end{latin}
+
+
+\section{نمونه شبه‌کد}
+
+\begin{latin}\begin{verbatim}
+audio = get_audio()
+
+text = asr.transcribe(audio)
+
+text = normalize_text(text)
+
+prompt = conversation.build_prompt(text)
+
+response = llm.generate(prompt)
+
+conversation.add(text, response)
+
+speech = tts.synthesize(response)
+
+play_audio(speech)
+\end{verbatim}\end{latin}
+
+
+\section{نمونه خروجی رابط خط فرمان}
+
+\begin{latin}\begin{verbatim}
+User speech received.
+
+\lr{ASR}:
+سلام، می‌توانی خودت را معرفی کنی؟
+
+\lr{LLM}:
+سلام، من یک دستیار گفت‌وگوی فارسی هستم...
+
+\lr{TTS}:
+\lr{Audio} generated successfully.
+
+\lr{ASR} latency: ...
+\lr{LLM} latency: ...
+\lr{TTS} latency: ...
+Total latency: ...
+\end{verbatim}\end{latin}
