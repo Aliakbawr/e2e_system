@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# IDE and OS metadata
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local model artifacts (documented in models/README.md)
+models/**
+!models/README.md
+
+# Runtime audio and transient outputs
+data/audio_in/*.wav
+data/audio_out/*.wav
+outputs/
+temp.wav
+python_mic.wav
+
+# Local logs and secrets
+*.log
+.env
+.env.*
+!.env.example

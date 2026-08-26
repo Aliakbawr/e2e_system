@@ -1,0 +1,13 @@
+# Install the appropriate PyTorch/CUDA build separately when GPU inference is used.
+torch
+transformers
+accelerate
+bitsandbytes
+nemo_toolkit[asr]
+piper-tts
+hazm
+librosa
+numpy
+scipy
+sounddevice
+soundfile
