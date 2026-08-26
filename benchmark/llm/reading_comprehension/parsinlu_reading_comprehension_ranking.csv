@@ -1,0 +1,6 @@
+rank,model,exact_match,mean_f1,mean_semantic_similarity
+1,Gemma 2 9B,0.2517,0.5811,0.7839
+2,Gemma 2 2B,0.1517,0.4805,0.7123
+3,Qwen2.5 7B,0.1350,0.4409,0.7160
+4,Dorna2 8B,0.0967,0.3928,0.6636
+5,Qwen2.5 3B,0.0633,0.3650,0.6647

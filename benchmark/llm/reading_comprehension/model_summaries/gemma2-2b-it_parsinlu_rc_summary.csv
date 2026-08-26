@@ -1,0 +1,2 @@
+﻿model_name,model_slug,questions,exact_match,mean_f1,median_f1,mean_semantic_similarity,median_semantic_similarity,avg_latency_sec,avg_output_tokens,avg_tokens_per_sec,peak_vram_gb,errors
+google/gemma-2-2b-it,gemma2-2b-it,600,0.15166666666666667,0.4804975920933415,0.4624765478424015,0.7123256174785395,0.738641768693924,1.570797487016692,23.073333333333334,14.41863592069594,8.695780754089355,0

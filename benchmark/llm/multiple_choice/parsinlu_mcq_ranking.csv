@@ -1,0 +1,6 @@
+rank,model,common_knowledge_accuracy,literature_accuracy,math_and_logic_accuracy,overall_accuracy
+1,Gemma 2 9B,0.5657,0.4771,0.3629,0.4686
+2,Qwen2.5 7B,0.4514,0.3343,0.4257,0.4038
+3,Dorna2 8B,0.4086,0.3743,0.3257,0.3695
+4,Qwen2.5 3B,0.3371,0.2686,0.2800,0.2952
+5,Gemma 2 2B,0.3429,0.2543,0.1743,0.2571

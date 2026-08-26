@@ -1,0 +1,6 @@
+model,samples,wer,cer,rtf,avg_latency_sec,gpu_memory_gb,total_inference_time_sec,total_audio_duration_sec
+wav2vec2-large-xlsr-persian-v3,871,0.2956,0.0904,0.0165,0.2523,,219.77,13321.86
+Whisper-large-v3,871,0.3130,0.0913,0.2545,3.8923,,3390.19,13321.86
+vosk-model-fa-0.42,871,0.1675,0.0628,0.2820,4.3131,,3756.71,13321.86
+stt_fa_fastconformer_hybrid_large_rnnt,871,0.4332,0.2777,0.0102,0.1555,,135.48,13321.86
+stt_fa_fastconformer_hybrid_large_ctc,871,0.2972,0.1058,0.0076,0.1163,,101.29,13321.86
