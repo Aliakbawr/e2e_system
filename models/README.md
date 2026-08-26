@@ -6,7 +6,7 @@ Default locations:
 
 ```text
 models/
-├── asr/nemo_stt_fa/stt_fa_fastconformer_hybrid_large.nemo
+├── asr/vosk/vosk-model-fa-0.42/
 ├── llm/gemma-2-9b-it-4bit/
 └── tts/piper/
     ├── fa_IR-gyro-medium.onnx

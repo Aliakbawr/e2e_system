@@ -3,7 +3,7 @@ torch
 transformers
 accelerate
 bitsandbytes
-nemo_toolkit[asr]
+vosk
 piper-tts
 hazm
 librosa

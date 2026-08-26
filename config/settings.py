@@ -8,7 +8,7 @@ DATA_DIR = BASE_DIR / "data"
 AUDIO_INPUT_DIR = DATA_DIR / "audio_in"
 AUDIO_OUTPUT_DIR = DATA_DIR / "audio_out"
 
-# Numba (used by librosa/NeMo) and Matplotlib try to cache compiled/config
+# Numba (used by librosa) and Matplotlib try to cache compiled/config
 # files during import.  Keep those caches in a writable location so model
 # loading also works when the Python environment itself is read-only.
 CACHE_DIR = Path(tempfile.gettempdir()) / "persian_assistant_cache"
@@ -19,12 +19,13 @@ os.environ.setdefault("MPLCONFIGDIR", str(CACHE_DIR / "matplotlib"))
 MIC_DEVICE = int(os.getenv("PERSIAN_ASSISTANT_MIC_DEVICE", "0"))
 SAMPLE_RATE = 16000
 AUDIO_PLAYER = os.getenv("PERSIAN_ASSISTANT_AUDIO_PLAYER", "paplay")
-# ASR (NeMo)
-ASR_MODEL_NAME = "nvidia/stt_fa_fastconformer_hybrid_large"
+# ASR (Vosk)
+ASR_MODEL_NAME = "vosk-model-fa-0.42"
+ASR_LOG_LEVEL = int(os.getenv("PERSIAN_ASSISTANT_VOSK_LOG_LEVEL", "-1"))
 
 ASR_MODEL_PATH = os.getenv(
     "PERSIAN_ASSISTANT_ASR_MODEL_PATH",
-    str(MODELS_DIR / "asr/nemo_stt_fa/stt_fa_fastconformer_hybrid_large.nemo"),
+    str(MODELS_DIR / "asr/vosk/vosk-model-fa-0.42"),
 )
 
 # LLM

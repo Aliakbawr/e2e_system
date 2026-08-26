@@ -3,7 +3,7 @@
 Local Persian speech assistant with an end-to-end runtime pipeline:
 
 ```text
-microphone/WAV -> NeMo Persian ASR -> Gemma 2 9B -> Piper Persian TTS -> audio playback
+microphone/WAV -> Vosk Persian ASR -> Gemma 2 9B -> Piper Persian TTS -> audio playback
 ```
 
 Research evaluations are isolated under [`benchmark/`](benchmark/README.md). The rest of this repository is the deployable chatbot application.
@@ -14,7 +14,7 @@ Research evaluations are isolated under [`benchmark/`](benchmark/README.md). The
 | --- | --- |
 | `main.py` | Primary local-chat entry point |
 | `config/` | Environment-aware runtime settings |
-| `src/asr/` | NeMo speech recognition adapter |
+| `src/asr/` | Vosk speech-recognition adapter and audio conversion |
 | `src/llm/` | Gemma response generation adapter |
 | `src/tts/` | Piper speech synthesis adapter |
 | `src/audio/` | Microphone capture and playback |
@@ -58,6 +58,7 @@ python -m scripts.record_mic
 The defaults live in `config/settings.py`. These environment variables can override machine-specific paths and devices:
 
 - `PERSIAN_ASSISTANT_ASR_MODEL_PATH`
+- `PERSIAN_ASSISTANT_VOSK_LOG_LEVEL`
 - `PERSIAN_ASSISTANT_LLM_MODEL_PATH`
 - `PERSIAN_ASSISTANT_TTS_MODEL_PATH`
 - `PERSIAN_ASSISTANT_TTS_CONFIG_PATH`
