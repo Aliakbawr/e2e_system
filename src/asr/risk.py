@@ -9,7 +9,7 @@ from config.settings import (
     ASR_CLARIFICATION_MAX_OPTIONS,
     ASR_WORD_CONFIDENCE_THRESHOLD,
 )
-from src.asr.transcriber import TranscriptionResult
+from src.asr.types import TranscriptionResult
 
 
 _PERSIAN_TRANSLATION = str.maketrans(

@@ -1,0 +1,208 @@
+{
+  "version": "v1",
+  "description": "Hand-authored Persian multi-turn ASR robustness and context cases.",
+  "dialogues": [
+    {
+      "id": "critical_term_correction",
+      "category": "critical_word_and_memory",
+      "turns": [
+        {
+          "id": "ambiguous_shaft",
+          "tier": "core",
+          "transcript": "شرط ماشین چیه",
+          "words": [["شرط", 0.39], ["ماشین", 0.99], ["چیه", 0.95]],
+          "alternatives": [["شرط ماشین چیه", 100.0], ["شفت ماشین چیه", 99.4]],
+          "expected_decision": "clarify",
+          "expected_options": ["شرط", "شفت"]
+        },
+        {
+          "id": "confirm_shaft",
+          "tier": "core",
+          "transcript": "شفت",
+          "words": [["شفت", 0.98]],
+          "alternatives": [["شفت", 40.0]],
+          "expected_decision": "answer",
+          "expected_resolved_question": "شفت ماشین چیه",
+          "expected_memory_contains": {"kind": "correction", "key": "شرط", "value": "شفت"},
+          "assistant_context": "شفت قطعه‌ای مکانیکی برای انتقال حرکت و گشتاور است.",
+          "answer_keyword_groups": [["شفت"], ["گشتاور", "حرکت", "قدرت", "محور", "چرخش"]]
+        },
+        {
+          "id": "shaft_follow_up",
+          "tier": "core",
+          "transcript": "چه کاربردی دارد",
+          "words": [["چه", 0.99], ["کاربردی", 0.97], ["دارد", 0.99]],
+          "alternatives": [["چه کاربردی دارد", 51.0]],
+          "prefill_history": [
+            ["موضوع آزمایشی یک", "پاسخ آزمایشی یک"],
+            ["موضوع آزمایشی دو", "پاسخ آزمایشی دو"],
+            ["موضوع آزمایشی سه", "پاسخ آزمایشی سه"],
+            ["موضوع آزمایشی چهار", "پاسخ آزمایشی چهار"],
+            ["موضوع آزمایشی پنج", "پاسخ آزمایشی پنج"],
+            ["موضوع آزمایشی شش", "پاسخ آزمایشی شش"],
+            ["موضوع آزمایشی هفت", "پاسخ آزمایشی هفت"]
+          ],
+          "expected_decision": "answer",
+          "expected_resolved_question": "چه کاربردی دارد",
+          "assistant_context": "برای انتقال حرکت و گشتاور میان اجزای ماشین استفاده می‌شود.",
+          "answer_keyword_groups": [["گشتاور", "حرکت", "نیرو", "قدرت"]]
+        }
+      ]
+    },
+    {
+      "id": "orthographic_variant",
+      "category": "false_clarification_control",
+      "turns": [
+        {
+          "id": "address_alef_variant",
+          "tier": "core",
+          "transcript": "آدرس دانشگاه شریف چیه",
+          "words": [["آدرس", 0.42], ["دانشگاه", 0.99], ["شریف", 1.0], ["چیه", 0.98]],
+          "alternatives": [["آدرس دانشگاه شریف چیه", 80.0], ["ادرس دانشگاه شریف چیه", 79.5]],
+          "expected_decision": "answer",
+          "expected_resolved_question": "آدرس دانشگاه شریف چیه",
+          "assistant_context": "دانشگاه صنعتی شریف در تهران قرار دارد.",
+          "answer_keyword_groups": [["تهران"]]
+        }
+      ]
+    },
+    {
+      "id": "number_repair",
+      "category": "number_corruption",
+      "turns": [
+        {
+          "id": "ambiguous_time",
+          "tier": "core",
+          "transcript": "جلسه ساعت پنجاه شروع میشه",
+          "words": [["جلسه", 0.99], ["ساعت", 0.98], ["پنجاه", 0.31], ["شروع", 0.97], ["میشه", 0.96]],
+          "alternatives": [["جلسه ساعت پنجاه شروع میشه", 91.0], ["جلسه ساعت پانزده شروع میشه", 90.3]],
+          "expected_decision": "clarify",
+          "expected_options": ["پنجاه", "پانزده"]
+        },
+        {
+          "id": "ordinal_time_confirmation",
+          "tier": "core",
+          "transcript": "دومی",
+          "words": [["دومی", 0.96]],
+          "alternatives": [["دومی", 30.0]],
+          "expected_decision": "answer",
+          "expected_resolved_question": "جلسه ساعت پانزده شروع میشه",
+          "assistant_context": "متوجه شدم؛ جلسه ساعت پانزده شروع می‌شود.",
+          "answer_keyword_groups": [["پانزده", "۱۵", "15"]]
+        }
+      ]
+    },
+    {
+      "id": "negation_repair",
+      "category": "negation_corruption",
+      "turns": [
+        {
+          "id": "ambiguous_negation",
+          "tier": "core",
+          "transcript": "من باید دارو را بخورم",
+          "words": [["من", 0.99], ["باید", 0.34], ["دارو", 0.99], ["را", 0.98], ["بخورم", 0.97]],
+          "alternatives": [["من باید دارو را بخورم", 88.0], ["من نباید دارو را بخورم", 87.4]],
+          "expected_decision": "clarify",
+          "expected_options": ["باید", "نباید"]
+        },
+        {
+          "id": "confirm_negation",
+          "tier": "core",
+          "transcript": "نباید",
+          "words": [["نباید", 0.99]],
+          "alternatives": [["نباید", 20.0]],
+          "expected_decision": "answer",
+          "expected_resolved_question": "من نباید دارو را بخورم",
+          "assistant_context": "اگر پزشک گفته دارو را نخورید، دستور او را رعایت کنید.",
+          "answer_keyword_groups": [["نباید", "نخور"]]
+        }
+      ]
+    },
+    {
+      "id": "topic_switch",
+      "category": "pending_clarification_abandonment",
+      "turns": [
+        {
+          "id": "ambiguous_city",
+          "tier": "core",
+          "transcript": "آب و هوای تبریز چطوره",
+          "words": [["آب", 0.99], ["و", 0.99], ["هوای", 0.98], ["تبریز", 0.41], ["چطوره", 0.96]],
+          "alternatives": [["آب و هوای تبریز چطوره", 74.0], ["آب و هوای تهران چطوره", 73.2]],
+          "expected_decision": "clarify",
+          "expected_options": ["تبریز", "تهران"]
+        },
+        {
+          "id": "new_topic_instead_of_confirmation",
+          "tier": "core",
+          "transcript": "قیمت طلا چقدره",
+          "words": [["قیمت", 0.99], ["طلا", 0.99], ["چقدره", 0.97]],
+          "alternatives": [["قیمت طلا چقدره", 60.0]],
+          "expected_decision": "answer",
+          "expected_resolved_question": "قیمت طلا چقدره",
+          "expected_resolution": false,
+          "assistant_context": "برای قیمت لحظه‌ای طلا باید منبع به‌روز بررسی شود."
+        }
+      ]
+    },
+    {
+      "id": "pronoun_context",
+      "category": "multi_turn_reference",
+      "turns": [
+        {
+          "id": "establish_tower",
+          "tier": "core",
+          "transcript": "برج میلاد در کدام شهر است",
+          "words": [["برج", 0.99], ["میلاد", 0.99], ["در", 1.0], ["کدام", 0.98], ["شهر", 0.99], ["است", 1.0]],
+          "alternatives": [["برج میلاد در کدام شهر است", 83.0]],
+          "expected_decision": "answer",
+          "expected_resolved_question": "برج میلاد در کدام شهر است",
+          "assistant_context": "برج میلاد در تهران است.",
+          "answer_keyword_groups": [["تهران"]]
+        },
+        {
+          "id": "tower_pronoun_follow_up",
+          "tier": "core",
+          "transcript": "ارتفاعش چقدره",
+          "words": [["ارتفاعش", 0.96], ["چقدره", 0.98]],
+          "alternatives": [["ارتفاعش چقدره", 44.0]],
+          "expected_decision": "answer",
+          "expected_resolved_question": "ارتفاعش چقدره",
+          "assistant_context": "ارتفاع برج میلاد حدود ۴۳۵ متر است.",
+          "answer_keyword_groups": [["۴۳۵", "435"], ["متر"]]
+        }
+      ]
+    },
+    {
+      "id": "noncritical_paraphrase",
+      "category": "challenge_task_relevance",
+      "turns": [
+        {
+          "id": "politeness_word_disagreement",
+          "tier": "challenge",
+          "transcript": "لطفا آدرس دانشگاه شریف رو بگو",
+          "words": [["لطفا", 0.35], ["آدرس", 0.99], ["دانشگاه", 0.99], ["شریف", 1.0], ["رو", 0.98], ["بگو", 0.99]],
+          "alternatives": [["لطفا آدرس دانشگاه شریف رو بگو", 70.0], ["خواهشا آدرس دانشگاه شریف رو بگو", 69.4]],
+          "expected_decision": "answer",
+          "expected_resolved_question": "لطفا آدرس دانشگاه شریف رو بگو",
+          "assistant_context": "دانشگاه صنعتی شریف در تهران قرار دارد.",
+          "answer_keyword_groups": [["تهران"]]
+        }
+      ]
+    },
+    {
+      "id": "overconfident_critical_error",
+      "category": "challenge_confidence_calibration",
+      "turns": [
+        {
+          "id": "high_confidence_name_disagreement",
+          "tier": "challenge",
+          "transcript": "درباره دانشگاه شریعت بگو",
+          "words": [["درباره", 0.99], ["دانشگاه", 0.99], ["شریعت", 0.91], ["بگو", 0.98]],
+          "alternatives": [["درباره دانشگاه شریعت بگو", 65.0], ["درباره دانشگاه شریف بگو", 64.3]],
+          "expected_decision": "clarify",
+          "expected_options": ["شریعت", "شریف"]
+        }
+      ]
+    }
+  ]
+}

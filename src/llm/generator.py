@@ -56,7 +56,7 @@ SYSTEM_INSTRUCTIONS = """شما یک دستیار گفتگومحور فارسی 
 - اگر سؤال مبهم است یا پاسخ را نمی‌دانی، صادقانه بگو."""
 
 
-def _build_messages(question, history=None, memory=None):
+def _build_messages(question, history=None, memory=None, turn_context=None):
     """Build a Gemma-compatible alternating conversation."""
     messages = [dict(message) for message in (history or [])]
     messages.append({"role": "user", "content": str(question).strip()})
@@ -70,17 +70,39 @@ def _build_messages(question, history=None, memory=None):
         prefix_parts.append(memory_block)
     prefix_parts.append(f"پیام کاربر:\n{messages[0]['content']}")
     messages[0]["content"] = "\n\n".join(prefix_parts)
+
+    # Keep confirmed memory close to the current question as well. With a full
+    # recent-history window, placing it only in the oldest user message makes a
+    # small local model prone to following newer but unrelated turns instead.
+    current_parts = []
+    if memory_block and len(messages) > 1:
+        current_parts.append(f"یادآوری حافظه مرتبط:\n{memory_block}")
+    if turn_context:
+        current_parts.append(str(turn_context).strip())
+    if current_parts:
+        current_parts.append(f"پیام فعلی کاربر:\n{messages[-1]['content']}")
+        messages[-1]["content"] = "\n\n".join(current_parts)
     return messages
 
 
-def _render_with_recent_history(question, history=None, memory=None):
+def _render_with_recent_history(
+    question,
+    history=None,
+    memory=None,
+    turn_context=None,
+):
     """Render a prompt, dropping oldest complete turns if it is too large."""
     retained_history = list(history or [])
 
     # History consists of complete user/assistant pairs. Removing two entries
     # maintains the role alternation required by Gemma's chat template.
     while True:
-        messages = _build_messages(question, retained_history, memory)
+        messages = _build_messages(
+            question,
+            retained_history,
+            memory,
+            turn_context,
+        )
         text = tokenizer.apply_chat_template(
             messages,
             tokenize=False,
@@ -94,7 +116,7 @@ def _render_with_recent_history(question, history=None, memory=None):
         retained_history = retained_history[2:]
 
 
-def generate_answer(question, history=None, memory=None):
+def generate_answer(question, history=None, memory=None, turn_context=None):
 
 
     if not question or not str(question).strip():
@@ -105,7 +127,7 @@ def generate_answer(question, history=None, memory=None):
             "tokens":0
         }
 
-    text = _render_with_recent_history(question, history, memory)
+    text = _render_with_recent_history(question, history, memory, turn_context)
 
 
     inputs = tokenizer(

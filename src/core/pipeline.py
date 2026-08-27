@@ -2,9 +2,9 @@ import logging
 import time
 
 from config.settings import AUDIO_OUTPUT_DIR
-from src.asr.risk import assess_asr_risk, resolve_clarification_reply
 from src.asr.transcriber import transcribe_audio_detailed
 from src.audio.player import play_audio
+from src.core.dialogue import interpret_transcription
 from src.llm.generator import generate_answer
 from src.tts.synthesizer import synthesize_speech
 
@@ -68,50 +68,33 @@ def chat(audio_path, session=None):
     transcription = transcribe_audio_detailed(
         audio_path
     )
-    question = transcription.text
+    dialogue = interpret_transcription(transcription, session)
+    question = dialogue.raw_question
+    risk = dialogue.risk
+    resolution = dialogue.resolution
     asr_details = transcription.to_dict()
-    risk = assess_asr_risk(transcription)
     asr_details["risk"] = risk.to_dict()
-    resolution = None
-
-    if session is not None and session.pending_clarification is not None:
-        pending = session.pending_clarification
-        if question.strip() and not risk.requires_clarification:
-            resolution = resolve_clarification_reply(
-                pending.original_text,
-                pending.options,
-                question,
-            )
-            if resolution.resolved:
-                session.remember_entity(
-                    label="عبارت تأییدشده",
-                    value=resolution.selected_option,
-                    context=resolution.resolved_question,
-                )
-                session.remember_correction(
-                    original=pending.options[0],
-                    corrected=resolution.selected_option,
-                    context=resolution.resolved_question,
-                )
-                logger.info(
-                    "session_memory_updated item_count=%d values=%s",
-                    len(session.memory),
-                    session.memory_snapshot(),
-                )
-            session.clear_pending_clarification()
-            logger.info(
-                "clarification_reply_processed resolved=%s method=%s "
-                "selected_option=%r raw_reply=%r resolved_question=%r",
-                resolution.resolved,
-                resolution.method,
-                resolution.selected_option,
-                question,
-                resolution.resolved_question,
-            )
 
     asr_details["clarification_resolution"] = (
         resolution.to_dict() if resolution is not None else None
     )
+
+    if dialogue.memory_updated and session is not None:
+        logger.info(
+            "session_memory_updated item_count=%d values=%s",
+            len(session.memory),
+            session.memory_snapshot(),
+        )
+    if resolution is not None:
+        logger.info(
+            "clarification_reply_processed resolved=%s method=%s "
+            "selected_option=%r raw_reply=%r resolved_question=%r",
+            resolution.resolved,
+            resolution.method,
+            resolution.selected_option,
+            question,
+            resolution.resolved_question,
+        )
 
     metrics["asr_time"] = time.time() - start
     metrics["asr_mean_word_confidence"] = transcription.mean_word_confidence
@@ -140,7 +123,7 @@ def chat(audio_path, session=None):
     # Empty input handling
     # =====================
 
-    if not question.strip():
+    if dialogue.action == "retry":
 
         logger.warning("asr_empty_transcript action=request_retry")
 
@@ -187,7 +170,7 @@ def chat(audio_path, session=None):
     # Targeted clarification
     # =====================
 
-    if risk.requires_clarification:
+    if dialogue.action == "clarify":
         answer = risk.clarification
         logger.warning(
             "asr_clarification_requested reason=%s low_confidence_words=%s "
@@ -196,10 +179,6 @@ def chat(audio_path, session=None):
             risk.low_confidence_words,
             risk.options,
         )
-
-        if session is not None:
-            session.add_turn(question, answer)
-            session.set_pending_clarification(question, risk.options)
 
         output_audio = AUDIO_OUTPUT_DIR / "response.wav"
         tts_result = synthesize_speech(answer, str(output_audio))
@@ -228,16 +207,18 @@ def chat(audio_path, session=None):
     # LLM
     # =====================
 
-    llm_question = (
-        resolution.resolved_question
-        if resolution is not None and resolution.resolved
-        else question
-    )
+    llm_question = dialogue.effective_question
 
     llm_result = generate_answer(
         llm_question,
         history=session.messages() if session is not None else None,
         memory=session.memory_prompt() if session is not None else None,
+        turn_context=(
+            "این پیام از پاسخ کاربر به رفع ابهام بازسازی شده است. "
+            "در پاسخ، واژه، عدد یا نفی تأییدشده را صریحاً تکرار کن."
+            if resolution is not None and resolution.resolved
+            else None
+        ),
     )
 
     answer = llm_result["answer"]

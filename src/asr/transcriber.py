@@ -2,7 +2,6 @@
 
 import json
 import math
-from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 
@@ -16,72 +15,7 @@ from config.settings import (
     ASR_MODEL_PATH,
     SAMPLE_RATE,
 )
-
-
-@dataclass(frozen=True)
-class RecognizedWord:
-    """One recognized word and its Vosk confidence/timing metadata."""
-
-    text: str
-    confidence: float | None = None
-    start: float | None = None
-    end: float | None = None
-
-    def to_dict(self) -> dict:
-        return {
-            "text": self.text,
-            "confidence": self.confidence,
-            "start": self.start,
-            "end": self.end,
-        }
-
-
-@dataclass(frozen=True)
-class TranscriptAlternative:
-    """One Vosk decoding hypothesis."""
-
-    text: str
-    words: tuple[RecognizedWord, ...] = ()
-    decoder_score: float | None = None
-
-    def to_dict(self, include_words: bool = False) -> dict:
-        result = {
-            "text": self.text,
-            # Vosk's alternative confidence is a decoder score, not a
-            # calibrated probability, so expose it under an explicit name.
-            "decoder_score": self.decoder_score,
-        }
-        if include_words:
-            result["words"] = [word.to_dict() for word in self.words]
-        return result
-
-
-@dataclass(frozen=True)
-class TranscriptionResult:
-    """Primary transcript plus confidence evidence and N-best hypotheses."""
-
-    text: str
-    words: tuple[RecognizedWord, ...] = ()
-    alternatives: tuple[TranscriptAlternative, ...] = ()
-
-    @property
-    def mean_word_confidence(self) -> float | None:
-        confidences = [
-            word.confidence for word in self.words if word.confidence is not None
-        ]
-        if not confidences:
-            return None
-        return sum(confidences) / len(confidences)
-
-    def to_dict(self) -> dict:
-        return {
-            "text": self.text,
-            "mean_word_confidence": self.mean_word_confidence,
-            "words": [word.to_dict() for word in self.words],
-            "alternatives": [
-                alternative.to_dict() for alternative in self.alternatives
-            ],
-        }
+from src.asr.types import RecognizedWord, TranscriptAlternative, TranscriptionResult
 
 
 @lru_cache(maxsize=1)

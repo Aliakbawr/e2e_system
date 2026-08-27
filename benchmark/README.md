@@ -4,6 +4,7 @@
 asr/                          Standalone Persian ASR evaluations
 llm/                          Standalone Persian LLM evaluations
 asr_llm_error_propagation/    End-to-end FLEURS ASR → Gemma QA experiment
+chatbot_multiturn/             Noisy multi-turn runtime regression/challenge suite
 ```
 
 Dataset-specific directories contain the raw checkpoints and notebooks, while
