@@ -2,7 +2,7 @@ import logging
 import time
 
 from config.settings import AUDIO_OUTPUT_DIR
-from src.asr.risk import assess_asr_risk
+from src.asr.risk import assess_asr_risk, resolve_clarification_reply
 from src.asr.transcriber import transcribe_audio_detailed
 from src.audio.player import play_audio
 from src.llm.generator import generate_answer
@@ -49,9 +49,11 @@ def chat(audio_path, session=None):
     metrics = {}
 
     logger.info(
-        "chat_turn_started audio_path=%s retained_session_turns=%d",
+        "chat_turn_started audio_path=%s retained_session_turns=%d "
+        "pending_clarification=%s",
         audio_path,
         len(session) if session is not None else 0,
+        bool(session is not None and session.pending_clarification is not None),
     )
 
     AUDIO_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -70,11 +72,38 @@ def chat(audio_path, session=None):
     asr_details = transcription.to_dict()
     risk = assess_asr_risk(transcription)
     asr_details["risk"] = risk.to_dict()
+    resolution = None
+
+    if session is not None and session.pending_clarification is not None:
+        pending = session.pending_clarification
+        if question.strip() and not risk.requires_clarification:
+            resolution = resolve_clarification_reply(
+                pending.original_text,
+                pending.options,
+                question,
+            )
+            session.clear_pending_clarification()
+            logger.info(
+                "clarification_reply_processed resolved=%s method=%s "
+                "selected_option=%r raw_reply=%r resolved_question=%r",
+                resolution.resolved,
+                resolution.method,
+                resolution.selected_option,
+                question,
+                resolution.resolved_question,
+            )
+
+    asr_details["clarification_resolution"] = (
+        resolution.to_dict() if resolution is not None else None
+    )
 
     metrics["asr_time"] = time.time() - start
     metrics["asr_mean_word_confidence"] = transcription.mean_word_confidence
     metrics["asr_alternative_count"] = len(transcription.alternatives)
     metrics["asr_requires_clarification"] = risk.requires_clarification
+    metrics["clarification_resolved"] = bool(
+        resolution is not None and resolution.resolved
+    )
     _log_asr_result(transcription, metrics["asr_time"])
     logger.info(
         "asr_risk_assessed requires_clarification=%s reason=%s "
@@ -152,6 +181,7 @@ def chat(audio_path, session=None):
 
         if session is not None:
             session.add_turn(question, answer)
+            session.set_pending_clarification(question, risk.options)
 
         output_audio = AUDIO_OUTPUT_DIR / "response.wav"
         tts_result = synthesize_speech(answer, str(output_audio))
@@ -179,15 +209,21 @@ def chat(audio_path, session=None):
     # LLM
     # =====================
 
+    llm_question = (
+        resolution.resolved_question
+        if resolution is not None and resolution.resolved
+        else question
+    )
+
     llm_result = generate_answer(
-        question,
+        llm_question,
         history=session.messages() if session is not None else None,
     )
 
     answer = llm_result["answer"]
 
     if session is not None and answer:
-        session.add_turn(question, answer)
+        session.add_turn(llm_question, answer)
 
 
     print("\nBOT:")
@@ -200,10 +236,11 @@ def chat(audio_path, session=None):
 
     logger.info(
         "llm_completed duration_sec=%.3f output_tokens=%d "
-        "retained_session_turns=%d answer=%r",
+        "retained_session_turns=%d query=%r answer=%r",
         metrics["llm_time"],
         llm_result["tokens"],
         len(session) if session is not None else 0,
+        llm_question,
         answer,
     )
 
@@ -251,6 +288,8 @@ def chat(audio_path, session=None):
         "asr": asr_details,
 
         "decision": "answer",
+
+        "resolved_question": llm_question,
 
         "answer": answer,
 

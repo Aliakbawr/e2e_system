@@ -12,6 +12,14 @@ class ChatTurn:
     assistant: str
 
 
+@dataclass(frozen=True)
+class PendingClarification:
+    """An ambiguous utterance waiting for the user's selection."""
+
+    original_text: str
+    options: tuple[str, ...]
+
+
 class ChatSession:
     """Keep a bounded number of completed chat turns in memory."""
 
@@ -21,6 +29,7 @@ class ChatSession:
 
         self.max_turns = max_turns
         self._turns = deque(maxlen=max_turns)
+        self._pending_clarification = None
 
     @property
     def turns(self) -> tuple[ChatTurn, ...]:
@@ -49,9 +58,33 @@ class ChatSession:
             )
         return messages
 
+    @property
+    def pending_clarification(self) -> PendingClarification | None:
+        return self._pending_clarification
+
+    def set_pending_clarification(
+        self,
+        original_text: str,
+        options: tuple[str, ...],
+    ) -> None:
+        original_text = str(original_text).strip()
+        cleaned_options = tuple(
+            str(option).strip() for option in options if str(option).strip()
+        )
+        if not original_text or len(cleaned_options) < 2:
+            raise ValueError("A pending clarification requires text and two options")
+        self._pending_clarification = PendingClarification(
+            original_text=original_text,
+            options=cleaned_options,
+        )
+
+    def clear_pending_clarification(self) -> None:
+        self._pending_clarification = None
+
     def clear(self) -> None:
         """Forget all retained turns."""
         self._turns.clear()
+        self.clear_pending_clarification()
 
     def __len__(self) -> int:
         return len(self._turns)

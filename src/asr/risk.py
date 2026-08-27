@@ -49,9 +49,93 @@ class ASRRiskAssessment:
         }
 
 
+@dataclass(frozen=True)
+class ClarificationResolution:
+    """Interpretation of a reply to a pending clarification."""
+
+    resolved: bool
+    selected_option: str | None = None
+    resolved_question: str | None = None
+    method: str | None = None
+
+    def to_dict(self) -> dict:
+        return {
+            "resolved": self.resolved,
+            "selected_option": self.selected_option,
+            "resolved_question": self.resolved_question,
+            "method": self.method,
+        }
+
+
 def _normalize_token(token: str) -> str:
     token = token.translate(_PERSIAN_TRANSLATION).lower()
     return re.sub(r"[^\w]", "", token)
+
+
+def _normalized_tokens(text: str) -> list[str]:
+    return [
+        normalized
+        for token in str(text).split()
+        if (normalized := _normalize_token(token))
+    ]
+
+
+def _contains_token_sequence(tokens: list[str], candidate: list[str]) -> bool:
+    if not candidate or len(candidate) > len(tokens):
+        return False
+    width = len(candidate)
+    return any(
+        tokens[index : index + width] == candidate
+        for index in range(len(tokens) - width + 1)
+    )
+
+
+def resolve_clarification_reply(
+    original_text: str,
+    options: tuple[str, ...],
+    reply: str,
+) -> ClarificationResolution:
+    """Resolve direct option repetitions and simple Persian ordinal replies."""
+    reply_tokens = _normalized_tokens(reply)
+    matches = [
+        option
+        for option in options
+        if _contains_token_sequence(reply_tokens, _normalized_tokens(option))
+    ]
+
+    selected_option = matches[0] if len(matches) == 1 else None
+    method = "option_text" if selected_option is not None else None
+
+    if selected_option is None and not matches:
+        normalized_reply = set(reply_tokens)
+        ordinal_indices = (
+            (0, {"اول", "اولی"}),
+            (1, {"دوم", "دومی"}),
+            (2, {"سوم", "سومی"}),
+        )
+        ordinal_matches = [
+            index
+            for index, words in ordinal_indices
+            if index < len(options) and normalized_reply.intersection(words)
+        ]
+        if len(ordinal_matches) == 1:
+            selected_option = options[ordinal_matches[0]]
+            method = "ordinal"
+
+    if selected_option is None:
+        return ClarificationResolution(resolved=False)
+
+    primary_option = options[0]
+    if primary_option not in original_text:
+        return ClarificationResolution(resolved=False)
+
+    resolved_question = original_text.replace(primary_option, selected_option, 1)
+    return ClarificationResolution(
+        resolved=True,
+        selected_option=selected_option,
+        resolved_question=resolved_question,
+        method=method,
+    )
 
 
 def _eligible_alternatives(transcription: TranscriptionResult):

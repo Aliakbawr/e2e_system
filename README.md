@@ -87,6 +87,8 @@ one alternative performs a second decoding pass. Set
 When a word is below the confidence threshold and plausible alternatives differ
 at that position, the assistant asks a targeted clarification before invoking
 the LLM. Orthographic variants such as `آدرس` and `ادرس` are treated as equal.
+The pending choices are retained for one following turn, allowing replies such
+as `شفت`, `منظورم شفت بود`, or `دومی` to reconstruct the original question.
 
 Runtime events are printed to the console and written to a rotating UTF-8 log.
 To monitor ASR confidence, alternatives, session size, stage latency, and errors:
