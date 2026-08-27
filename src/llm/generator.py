@@ -56,7 +56,7 @@ SYSTEM_INSTRUCTIONS = """شما یک دستیار گفتگومحور فارسی 
 - اگر سؤال مبهم است یا پاسخ را نمی‌دانی، صادقانه بگو."""
 
 
-def _build_messages(question, history=None):
+def _build_messages(question, history=None, memory=None):
     """Build a Gemma-compatible alternating conversation."""
     messages = [dict(message) for message in (history or [])]
     messages.append({"role": "user", "content": str(question).strip()})
@@ -64,21 +64,23 @@ def _build_messages(question, history=None):
     # Gemma 2's standard template expects alternating user/model roles and may
     # reject a separate system role. Put the instructions in the first user
     # message without modifying the session's stored copy.
-    messages[0]["content"] = (
-        f"{SYSTEM_INSTRUCTIONS}\n\n"
-        f"پیام کاربر:\n{messages[0]['content']}"
-    )
+    memory_block = str(memory or "").strip()
+    prefix_parts = [SYSTEM_INSTRUCTIONS]
+    if memory_block:
+        prefix_parts.append(memory_block)
+    prefix_parts.append(f"پیام کاربر:\n{messages[0]['content']}")
+    messages[0]["content"] = "\n\n".join(prefix_parts)
     return messages
 
 
-def _render_with_recent_history(question, history=None):
+def _render_with_recent_history(question, history=None, memory=None):
     """Render a prompt, dropping oldest complete turns if it is too large."""
     retained_history = list(history or [])
 
     # History consists of complete user/assistant pairs. Removing two entries
     # maintains the role alternation required by Gemma's chat template.
     while True:
-        messages = _build_messages(question, retained_history)
+        messages = _build_messages(question, retained_history, memory)
         text = tokenizer.apply_chat_template(
             messages,
             tokenize=False,
@@ -92,7 +94,7 @@ def _render_with_recent_history(question, history=None):
         retained_history = retained_history[2:]
 
 
-def generate_answer(question, history=None):
+def generate_answer(question, history=None, memory=None):
 
 
     if not question or not str(question).strip():
@@ -103,7 +105,7 @@ def generate_answer(question, history=None):
             "tokens":0
         }
 
-    text = _render_with_recent_history(question, history)
+    text = _render_with_recent_history(question, history, memory)
 
 
     inputs = tokenizer(

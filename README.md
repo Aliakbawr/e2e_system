@@ -89,6 +89,11 @@ at that position, the assistant asks a targeted clarification before invoking
 the LLM. Orthographic variants such as `آدرس` and `ادرس` are treated as equal.
 The pending choices are retained for one following turn, allowing replies such
 as `شفت`, `منظورم شفت بود`, or `دومی` to reconstruct the original question.
+Confirmed choices and contextual corrections are then kept in a separate,
+bounded session memory even after their original dialogue turns leave the
+six-turn history. This memory is supplied to the LLM with instructions not to
+treat contextual corrections as global replacements, and is cleared when the
+process exits or the session is cleared.
 
 Runtime events are printed to the console and written to a rotating UTF-8 log.
 To monitor ASR confidence, alternatives, session size, stage latency, and errors:

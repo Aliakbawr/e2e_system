@@ -82,6 +82,22 @@ def chat(audio_path, session=None):
                 pending.options,
                 question,
             )
+            if resolution.resolved:
+                session.remember_entity(
+                    label="عبارت تأییدشده",
+                    value=resolution.selected_option,
+                    context=resolution.resolved_question,
+                )
+                session.remember_correction(
+                    original=pending.options[0],
+                    corrected=resolution.selected_option,
+                    context=resolution.resolved_question,
+                )
+                logger.info(
+                    "session_memory_updated item_count=%d values=%s",
+                    len(session.memory),
+                    session.memory_snapshot(),
+                )
             session.clear_pending_clarification()
             logger.info(
                 "clarification_reply_processed resolved=%s method=%s "
@@ -104,6 +120,7 @@ def chat(audio_path, session=None):
     metrics["clarification_resolved"] = bool(
         resolution is not None and resolution.resolved
     )
+    metrics["session_memory_items"] = len(session.memory) if session is not None else 0
     _log_asr_result(transcription, metrics["asr_time"])
     logger.info(
         "asr_risk_assessed requires_clarification=%s reason=%s "
@@ -159,6 +176,7 @@ def chat(audio_path, session=None):
             "question": question,
             "asr": asr_details,
             "decision": "retry",
+            "memory": session.memory_snapshot() if session is not None else [],
             "answer": answer,
             "audio": str(output_audio),
             "metrics": metrics
@@ -199,6 +217,7 @@ def chat(audio_path, session=None):
             "question": question,
             "asr": asr_details,
             "decision": "clarify",
+            "memory": session.memory_snapshot() if session is not None else [],
             "answer": answer,
             "audio": str(output_audio),
             "metrics": metrics,
@@ -218,6 +237,7 @@ def chat(audio_path, session=None):
     llm_result = generate_answer(
         llm_question,
         history=session.messages() if session is not None else None,
+        memory=session.memory_prompt() if session is not None else None,
     )
 
     answer = llm_result["answer"]
@@ -290,6 +310,8 @@ def chat(audio_path, session=None):
         "decision": "answer",
 
         "resolved_question": llm_question,
+
+        "memory": session.memory_snapshot() if session is not None else [],
 
         "answer": answer,
 
