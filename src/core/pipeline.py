@@ -2,6 +2,7 @@ import logging
 import time
 
 from config.settings import AUDIO_OUTPUT_DIR
+from src.asr.text import preprocess_transcription
 from src.asr.transcriber import transcribe_audio_detailed
 from src.audio.player import play_audio
 from src.core.dialogue import interpret_transcription
@@ -65,14 +66,17 @@ def chat(audio_path, session=None):
 
     start = time.time()
 
-    transcription = transcribe_audio_detailed(
+    raw_transcription = transcribe_audio_detailed(
         audio_path
     )
+    transcription = preprocess_transcription(raw_transcription)
     dialogue = interpret_transcription(transcription, session)
     question = dialogue.raw_question
     risk = dialogue.risk
     resolution = dialogue.resolution
-    asr_details = transcription.to_dict()
+    asr_details = raw_transcription.to_dict()
+    asr_details["preprocessed"] = transcription.to_dict()
+    asr_details["preprocessing_changed"] = raw_transcription != transcription
     asr_details["risk"] = risk.to_dict()
 
     asr_details["clarification_resolution"] = (
@@ -99,12 +103,22 @@ def chat(audio_path, session=None):
     metrics["asr_time"] = time.time() - start
     metrics["asr_mean_word_confidence"] = transcription.mean_word_confidence
     metrics["asr_alternative_count"] = len(transcription.alternatives)
+    metrics["asr_preprocessing_changed"] = raw_transcription != transcription
     metrics["asr_requires_clarification"] = risk.requires_clarification
     metrics["clarification_resolved"] = bool(
         resolution is not None and resolution.resolved
     )
     metrics["session_memory_items"] = len(session.memory) if session is not None else 0
     _log_asr_result(transcription, metrics["asr_time"])
+    if raw_transcription != transcription:
+        logger.info(
+            "asr_preprocessed raw_transcript=%r processed_transcript=%r "
+            "raw_alternatives=%s processed_alternatives=%s",
+            raw_transcription.text,
+            transcription.text,
+            [item.text for item in raw_transcription.alternatives],
+            [item.text for item in transcription.alternatives],
+        )
     logger.info(
         "asr_risk_assessed requires_clarification=%s reason=%s "
         "low_confidence_words=%s options=%s",

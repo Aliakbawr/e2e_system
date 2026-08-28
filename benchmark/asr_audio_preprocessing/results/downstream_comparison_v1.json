@@ -1,0 +1,59 @@
+{
+  "all_769": {
+    "recordings": 769,
+    "baseline_em": 0.3953185955786736,
+    "enhanced_em": 0.3992197659297789,
+    "em_delta": 0.003901170351105321,
+    "baseline_mean_f1": 0.6952159264317296,
+    "enhanced_mean_f1": 0.7040439662678805,
+    "mean_f1_delta": 0.00882803983615088,
+    "em_gained": 7,
+    "em_lost": 4,
+    "asr_contexts_changed": 117,
+    "llm_answers_changed": 33,
+    "cluster_bootstrap_95_ci": {
+      "unit": "semantic_id",
+      "replicates": 5000,
+      "seed": 20260828,
+      "em_delta": {
+        "lower": -0.003942181340341655,
+        "upper": 0.012887013634852005,
+        "probability_of_improvement": 0.7778
+      },
+      "mean_f1_delta": {
+        "lower": 0.0026222362461009183,
+        "upper": 0.016205598927116358,
+        "probability_of_improvement": 0.9972
+      }
+    }
+  },
+  "primary_oracle_em_cohort": {
+    "recordings": 470,
+    "baseline_em": 0.6297872340425532,
+    "enhanced_em": 0.6340425531914894,
+    "em_delta": 0.004255319148936176,
+    "baseline_mean_f1": 0.7947502333404255,
+    "enhanced_mean_f1": 0.8020712862212767,
+    "mean_f1_delta": 0.007321052880851164,
+    "em_gained": 6,
+    "em_lost": 4,
+    "asr_contexts_changed": 68,
+    "llm_answers_changed": 20,
+    "cluster_bootstrap_95_ci": {
+      "unit": "semantic_id",
+      "replicates": 5000,
+      "seed": 20260828,
+      "em_delta": {
+        "lower": -0.008620689655172414,
+        "upper": 0.01716830495177441,
+        "probability_of_improvement": 0.6788
+      },
+      "mean_f1_delta": {
+        "lower": -0.0008734364689163198,
+        "upper": 0.016493825972199457,
+        "probability_of_improvement": 0.9608
+      }
+    }
+  },
+  "interpretation": "Only the ASR context differs. Confidence intervals cluster repeated recordings by semantic ID."
+}

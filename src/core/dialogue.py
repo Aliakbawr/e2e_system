@@ -8,6 +8,7 @@ from src.asr.risk import (
     assess_asr_risk,
     resolve_clarification_reply,
 )
+from src.asr.text import preprocess_transcription
 from src.asr.types import TranscriptionResult
 from src.core.session import ChatSession
 
@@ -29,6 +30,7 @@ def interpret_transcription(
     session: ChatSession | None = None,
 ) -> DialogueDecision:
     """Apply clarification, correction, and memory rules to one transcript."""
+    transcription = preprocess_transcription(transcription)
     question = transcription.text.strip()
     risk = assess_asr_risk(transcription)
     resolution = None

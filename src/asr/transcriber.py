@@ -1,21 +1,22 @@
 """Vosk-based Persian speech recognition for the chatbot runtime."""
 
 import json
-import math
+import logging
 from functools import lru_cache
 from pathlib import Path
 
-import numpy as np
-import soundfile as sf
-from scipy.signal import resample_poly
-
 from config.settings import (
+    ASR_AUDIO_PREPROCESSING,
     ASR_LOG_LEVEL,
     ASR_MAX_ALTERNATIVES,
     ASR_MODEL_PATH,
     SAMPLE_RATE,
 )
+from src.asr.audio import prepare_audio_file
 from src.asr.types import RecognizedWord, TranscriptAlternative, TranscriptionResult
+
+
+logger = logging.getLogger(__name__)
 
 
 @lru_cache(maxsize=1)
@@ -41,35 +42,21 @@ def _load_model():
     return Model(str(model_path))
 
 
-def _read_pcm16(audio_path: str) -> bytes:
+def _read_pcm16(audio_path: str, preprocessing_profile: str | None = None) -> bytes:
     """Read an audio file and return 16 kHz mono signed PCM16 bytes."""
-    path = Path(audio_path)
-    if not path.is_file():
-        raise FileNotFoundError(f"Audio file not found: {path}")
-
-    audio, source_rate = sf.read(
-        str(path),
-        dtype="float32",
-        always_2d=True,
-    )
-
-    if audio.size == 0:
-        return b""
-
-    audio = audio.mean(axis=1)
-
-    if source_rate != SAMPLE_RATE:
-        divisor = math.gcd(int(source_rate), SAMPLE_RATE)
-        audio = resample_poly(
-            audio,
-            SAMPLE_RATE // divisor,
-            int(source_rate) // divisor,
+    profile = preprocessing_profile or ASR_AUDIO_PREPROCESSING
+    prepared = prepare_audio_file(audio_path, SAMPLE_RATE, profile)
+    if prepared.applied:
+        logger.info(
+            "asr_audio_preprocessed profile=%s input_rms_dbfs=%.2f "
+            "output_rms_dbfs=%.2f gain_db=%.2f duration_sec=%.3f",
+            prepared.profile,
+            prepared.input_rms_dbfs,
+            prepared.output_rms_dbfs,
+            prepared.gain_db,
+            prepared.duration_sec,
         )
-
-    audio = np.nan_to_num(audio, nan=0.0, posinf=1.0, neginf=-1.0)
-    audio = np.clip(audio, -1.0, 1.0)
-
-    return (audio * 32767.0).astype("<i2").tobytes()
+    return prepared.pcm16
 
 
 def _optional_float(value) -> float | None:
@@ -222,7 +209,10 @@ def _merge_results(
     )
 
 
-def transcribe_audio_detailed(audio_path: str) -> TranscriptionResult:
+def transcribe_audio_detailed(
+    audio_path: str,
+    preprocessing_profile: str | None = None,
+) -> TranscriptionResult:
     """Transcribe audio and retain Vosk word confidence and alternatives.
 
     Vosk emits per-word confidence in normal MBR mode, while N-best mode emits
@@ -230,7 +220,7 @@ def transcribe_audio_detailed(audio_path: str) -> TranscriptionResult:
     enabled, two recognizers therefore decode the same PCM using one shared
     cached acoustic model, and their complementary outputs are merged.
     """
-    pcm = _read_pcm16(audio_path)
+    pcm = _read_pcm16(audio_path, preprocessing_profile)
     if not pcm:
         return TranscriptionResult(text="")
 

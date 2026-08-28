@@ -1,0 +1,49 @@
+{
+  "stage": "asr_audio_preprocessing_low_level_gain_v1",
+  "profile": "low_level_gain",
+  "configuration": {
+    "threshold_dbfs": -45.0,
+    "target_rms_dbfs": -24.0,
+    "max_gain_db": 40.0,
+    "peak_headroom_dbfs": -1.0
+  },
+  "input_path": "/home/aliakbar/projects/e2e_system/benchmark/asr_llm_error_propagation/analysis/inputs/vosk_fleurs_qa_eval_input_v1.csv",
+  "input_sha256": "a365c9eff00c0fa6e18c24015c331bcd1de1ee0071cbd40f3f0917ce4b8aff45",
+  "checkpoint_path": "/home/aliakbar/projects/e2e_system/benchmark/asr_audio_preprocessing/results/low_level_gain_checkpoint_v1.csv",
+  "checkpoint_sha256": "ec2cd42cd070aa195e5d018648fd9c7dd8e6b35f31363111041681a5baccf6ff",
+  "output_path": "/home/aliakbar/projects/e2e_system/benchmark/asr_audio_preprocessing/results/low_level_gain_fleurs_qa_eval_input_v1.csv",
+  "output_sha256": "b4ad09edfe14be8ca743749de5df4d92ee45f51eb1a0412cdb33b18fe6f119e4",
+  "paired_changes_path": "/home/aliakbar/projects/e2e_system/benchmark/asr_audio_preprocessing/results/low_level_gain_paired_changes_v1.csv",
+  "paired_changes_sha256": "3da70ef57108846d6245df465390b5e43f3dedbca7352cb1148b619f0719ee86",
+  "summary": {
+    "recordings": 769,
+    "preprocessing_applied": 206,
+    "transcripts_changed": 119,
+    "row_wer_improved": 63,
+    "row_wer_regressed": 31,
+    "row_wer_unchanged": 675,
+    "mean_recording_wer_before": 0.12879651967719832,
+    "mean_recording_wer_after": 0.1261393397477771,
+    "corpus_wer_before": 0.12740157480314962,
+    "corpus_wer_after": 0.1247244094488189,
+    "answer_preservation_rate_before": 0.659297789336801,
+    "answer_preservation_rate_after": 0.6631989596879063,
+    "answer_spans_gained": 8,
+    "answer_spans_lost": 5,
+    "cluster_bootstrap_95_ci": {
+      "unit": "semantic_id",
+      "replicates": 5000,
+      "seed": 20260828,
+      "corpus_wer_delta_after_minus_before": {
+        "lower": -0.004446161788761455,
+        "upper": -0.0009961113812445345,
+        "probability_of_improvement": 0.999
+      },
+      "answer_preservation_delta_after_minus_before": {
+        "lower": -0.006321714144532076,
+        "upper": 0.014475118195091407,
+        "probability_of_improvement": 0.7238
+      }
+    }
+  }
+}
