@@ -2,6 +2,12 @@
 
 LaTeX sources for the Persian voice-chatbot and ASR-to-LLM error-propagation final-project report.
 
+The implementation and results chapters document the current
+`Vosk -> Gemma 2 9B -> Piper` runtime, bounded conversation and correction
+memory, Persian/audio preprocessing, confidence-aware clarification, constrained
+N-best recovery, rotating logs, and the frozen 769-recording propagation and
+enhancement evaluations.
+
 ## Structure
 
 ```text

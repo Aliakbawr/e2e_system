@@ -8,15 +8,17 @@
 
 \begin{latin}\begin{verbatim}
 1. Receive user audio
-2. Detect / prepare speech
-3. Run \lr{ASR}
-4. Normalize transcription
-5. Add conversation context
-6. Run \lr{LLM}
-7. Normalize response for \lr{TTS}
-8. Run \lr{TTS}
-9. Play generated audio
-10. Record latency and logs
+2. Convert to 16 kHz mono PCM16
+3. Apply gated low-level gain when needed
+4. Run Vosk primary and N-best decoding
+5. Normalize all Persian hypotheses
+6. Apply contextual correction memory
+7. Assess confidence and critical-slot risk
+8. Retry, clarify, or construct the LLM context
+9. Run Gemma 2 9B when an answer is permitted
+10. Update the bounded session history
+11. Run Piper TTS and play the response
+12. Record confidence, decisions, latency, and errors
 \end{verbatim}\end{latin}
 
 
@@ -25,15 +27,21 @@
 \begin{latin}\begin{verbatim}
 audio = get_audio()
 
-text = asr.transcribe(audio)
+raw = transcribe_audio_detailed(audio)
+transcription = preprocess_transcription(raw)
+decision = interpret_transcription(transcription, session)
 
-text = normalize_text(text)
-
-prompt = conversation.build_prompt(text)
-
-response = llm.generate(prompt)
-
-conversation.add(text, response)
+if decision.action == "retry":
+    response = retry_message
+elif decision.action == "clarify":
+    response = decision.risk.clarification
+else:
+    response = llm.generate(
+        decision.effective_question,
+        history=session.messages(),
+        memory=session.memory_prompt(),
+    )
+    session.add_turn(decision.effective_question, response)
 
 speech = tts.synthesize(response)
 
@@ -44,19 +52,26 @@ play_audio(speech)
 \section{نمونه خروجی رابط خط فرمان}
 
 \begin{latin}\begin{verbatim}
-User speech received.
+USER:
+آدرس دانشگاه شریف چیه
 
-\lr{ASR}:
-سلام، می‌توانی خودت را معرفی کنی؟
+BOT:
+دانشگاه صنعتی شریف در تهران قرار دارد.
 
-\lr{LLM}:
-سلام، من یک دستیار گفت‌وگوی فارسی هستم...
+Metrics:
+{'asr_time': 5.36,
+ 'asr_mean_word_confidence': 0.9925,
+ 'asr_alternative_count': 3,
+ 'asr_preprocessing_changed': False,
+ 'asr_nbest_reranked': False,
+ 'asr_requires_clarification': False,
+ 'session_memory_items': 0,
+ 'llm_time': 4.27,
+ 'tts_time': 0.22}
+\end{verbatim}\end{latin}
 
-\lr{TTS}:
-\lr{Audio} generated successfully.
+برای پایش هم‌زمان می‌توان در یک پایانه دیگر دستور زیر را اجرا کرد:
 
-\lr{ASR} latency: ...
-\lr{LLM} latency: ...
-\lr{TTS} latency: ...
-Total latency: ...
+\begin{latin}\begin{verbatim}
+tail -f data/logs/chatbot.log
 \end{verbatim}\end{latin}

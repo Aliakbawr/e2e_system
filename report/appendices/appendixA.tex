@@ -4,8 +4,10 @@
 
 \section{مشخصات سخت‌افزار}
 
-تمام آزمایش‌های اصلی پروژه روی یک سیستم محلی انجام شده‌اند.
-مشخصات سخت‌افزار مورد استفاده در جدول زیر ارائه می‌شود.
+اجرای تعاملی و آزمایش‌های محلی نهایی روی سیستم زیر انجام شدند.
+خروجی برخی ارزیابی‌های مقایسه‌ای مدل‌های \lr{ASR} از دفترچه‌های
+منجمد \lr{Colab} به دست آمده است؛ ازاین‌رو زمان‌های هر جدول فقط
+درون همان محیط و همان آزمایش مستقیماً قابل مقایسه‌اند.
 
 \begin{table}[H]
 \centering
@@ -16,12 +18,12 @@
 \toprule
 \textbf{مؤلفه} & \textbf{مشخصات} \\
 \midrule
-\lr{CPU} & \lr{[CPU MODEL]} \\
-\lr{GPU} & \lr{[GPU MODEL]} \\
-\lr{GPU Memory} & \lr{[VRAM GB]} \\
-\lr{RAM} & \lr{[RAM GB]} \\
-\lr{Storage} & \lr{[SSD/HDD]} \\
-\lr{Operating System} & \lr{[OS]} \\
+\lr{CPU} & \lr{Intel Core i7-13700H} \\
+\lr{GPU} & \lr{NVIDIA GeForce RTX 4070 Laptop GPU} \\
+\lr{GPU Memory} & \lr{8 GB} \\
+\lr{RAM available to WSL2} & \lr{8 GB} \\
+\lr{Operating System} & \lr{Linux under WSL2} \\
+\lr{GPU Driver} & \lr{610.62} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -38,18 +40,24 @@
 کتابخانه‌های مورد استفاده بسته به مدل شامل ابزارهای پردازش
 گفتار، مدل‌های زبانی و یادگیری عمیق هستند.
 
-نسخه دقیق محیط نهایی پروژه باید پیش از تحویل گزارش ثبت شود.
-
 \begin{latin}
 \begin{verbatim}
-Python: [VERSION]
-PyTorch: [VERSION]
-Transformers: [VERSION]
-CUDA: [VERSION]
-NeMo: [VERSION]
-Vosk: [VERSION]
+Python: 3.12.13
+PyTorch: 2.12.0
+Transformers: 4.57.6
+Accelerate: 1.14.0
+BitsAndBytes: 0.49.2
+Vosk: 0.3.45
+Piper-TTS: 1.4.2
+Hazm: 0.12.1
+Librosa: 0.11.0
 \end{verbatim}
 \end{latin}
+
+نسخه‌های فوق محیط اجرایی جاری را مستند می‌کنند. دفترچه‌های
+قدیمی‌تر ممکن است نسخه کتابخانه متفاوتی داشته باشند؛ فایل خروجی،
+هش و متادیتای آزمایش‌های انتشار خطا برای جلوگیری از اختلاط
+نسخه‌ها در شاخه \lr{benchmark} نگهداری شده‌اند.
 
 
 % =========================================================
@@ -93,17 +101,18 @@ RTF =
 % =========================================================
 \section{تنظیمات ارزیابی مدل زبانی}
 
-برای ارزیابی مدل‌های زبانی، تعداد
-\lr{1000}
-نمونه به‌صورت تصادفی از مجموعه
-\lr{Farsi Instruct}
-انتخاب شدند.
+ارزیابی اصلی مدل‌های زبانی شامل ۱۰۵۰ پرسش چندگزینه‌ای
+\lr{ParsiNLU} و ۶۰۰ نمونه درک مطلب \lr{ParsBench RC} بود.
+آزمایش ۱۰۰۰ نمونه تصادفی \lr{FarsiInstruct} فقط مطالعه مقدماتی
+و خارج از رتبه‌بندی اصلی است.
 
 معیارهای اصلی عبارت بودند از:
 
 \begin{itemize}
+    \item دقت چندگزینه‌ای؛
+    \item تطابق دقیق؛
+    \item \lr{F1} توکنی؛
     \item شباهت معنایی؛
-    \item \lr{ROUGE-L}؛
     \item زمان تأخیر؛
     \item تعداد توکن در ثانیه؛
     \item و بیشینه مصرف حافظه \lr{GPU}.
@@ -111,6 +120,35 @@ RTF =
 
 برای مقایسه منصفانه، تنظیمات تولید پاسخ باید برای تمام مدل‌ها
 تا حد امکان یکسان باقی بمانند.
+
+
+% =========================================================
+\section{تنظیمات مسیر اجرایی و ارزیابی مقاومت}
+
+تنظیمات پیش‌فرض مسیر \lr{main.py} عبارت‌اند از:
+
+\begin{latin}
+\begin{verbatim}
+ASR model: vosk-model-fa-0.42
+Audio preprocessing: low_level_gain
+ASR alternatives: 3
+Word-confidence threshold: 0.65
+Alternative-score gap: 1.0
+Clarification options: 2
+History turns: 6
+Correction-memory items: 12
+LLM: Gemma 2 9B Instruct, 4-bit
+Maximum LLM input tokens: 2048
+Maximum LLM output tokens: 150
+TTS: Piper fa_IR-gyro-medium
+\end{verbatim}
+\end{latin}
+
+آزمایش بهبود صوت و انتشار پایین‌دستی روی ۷۶۹ ضبط و ۲۸۶ شناسه
+معنایی انجام شد. تقسیم \lr{N-best} شامل ۱۹۲ شناسه توسعه و ۹۴
+شناسه نگه‌داشته‌شده بود. فاصله‌های اطمینان با ۵۰۰۰ تکرار
+بوت‌استرپ خوشه‌ای و بذر ثابت ۲۰۲۶۰۸۲۸ محاسبه شدند. واحد
+بازنمونه‌گیری شناسه معنایی بود، نه فایل ضبط منفرد.
 
 
 % =========================================================
