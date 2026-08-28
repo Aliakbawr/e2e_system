@@ -5,6 +5,7 @@ asr/                          Standalone Persian ASR evaluations
 llm/                          Standalone Persian LLM evaluations
 asr_llm_error_propagation/    End-to-end FLEURS ASR → Gemma QA experiment
 chatbot_multiturn/             Noisy multi-turn runtime regression/challenge suite
+enhancement_tracking/          Paired stage snapshots and improvement reports
 ```
 
 Dataset-specific directories contain the raw checkpoints and notebooks, while
@@ -23,3 +24,9 @@ consolidated CSV files provide analysis-ready model rankings.
 The standalone ASR/LLM rankings establish model performance. The propagation
 setup is a separate experiment and must not be interpreted as another row in
 either standalone ranking.
+
+For chatbot enhancement work, use the staged protocol in
+`enhancement_tracking/README.md`. It reuses the frozen propagation data after
+each relevant change, reserves the expensive full LLM replay for milestones,
+and keeps a separate held-out real-audio test for the final generalization
+check.
