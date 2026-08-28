@@ -1,0 +1,50 @@
+{
+  "stage": "vosk_nbest_evidence_v1",
+  "configuration": {
+    "max_alternatives": 3,
+    "audio_profile": "low_level_gain",
+    "split_salt": "persian-assistant-nbest-v1",
+    "development_fraction": 0.7
+  },
+  "input_sha256": "b4ad09edfe14be8ca743749de5df4d92ee45f51eb1a0412cdb33b18fe6f119e4",
+  "split_sha256": "955bb07026de4c2afb6a0a6551da83b1c0be24e65865c20b063ff31b80444c04",
+  "evidence_sha256": "493911cfc90a1bfc9f32aed9b15f6498b89e013df49fcf6cf1d54442c671fbd6",
+  "summary": {
+    "development": {
+      "recordings": 517,
+      "mean_recording_wer_primary": 0.12772890753711139,
+      "mean_recording_wer_oracle_nbest": 0.11242381462369197,
+      "oracle_nbest_better_recordings": 142,
+      "mean_recording_wer_top_decoder": 0.14978067122955355,
+      "top_decoder_better_recordings": 2,
+      "top_decoder_worse_recordings": 241,
+      "answer_span_rate_primary": 0.6769825918762089,
+      "answer_span_rate_oracle_nbest": 0.7408123791102514,
+      "answer_spans_recoverable_from_nbest": 33
+    },
+    "held_out": {
+      "recordings": 252,
+      "mean_recording_wer_primary": 0.12287820265616703,
+      "mean_recording_wer_oracle_nbest": 0.11003082916536717,
+      "oracle_nbest_better_recordings": 65,
+      "mean_recording_wer_top_decoder": 0.14035731252785044,
+      "top_decoder_better_recordings": 3,
+      "top_decoder_worse_recordings": 101,
+      "answer_span_rate_primary": 0.6349206349206349,
+      "answer_span_rate_oracle_nbest": 0.6984126984126984,
+      "answer_spans_recoverable_from_nbest": 16
+    },
+    "all": {
+      "recordings": 769,
+      "mean_recording_wer_primary": 0.12613933974777727,
+      "mean_recording_wer_oracle_nbest": 0.11163963733435804,
+      "oracle_nbest_better_recordings": 207,
+      "mean_recording_wer_top_decoder": 0.1466926525132607,
+      "top_decoder_better_recordings": 5,
+      "top_decoder_worse_recordings": 342,
+      "answer_span_rate_primary": 0.6631989596879063,
+      "answer_span_rate_oracle_nbest": 0.7269180754226268,
+      "answer_spans_recoverable_from_nbest": 49
+    }
+  }
+}

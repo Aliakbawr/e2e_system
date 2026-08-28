@@ -8,6 +8,7 @@ from src.asr.risk import (
     assess_asr_risk,
     resolve_clarification_reply,
 )
+from src.asr.rerank import NBestReranking, rerank_with_session_memory
 from src.asr.text import preprocess_transcription
 from src.asr.types import TranscriptionResult
 from src.core.session import ChatSession
@@ -23,6 +24,7 @@ class DialogueDecision:
     risk: ASRRiskAssessment
     resolution: ClarificationResolution | None = None
     memory_updated: bool = False
+    reranking: NBestReranking | None = None
 
 
 def interpret_transcription(
@@ -31,6 +33,8 @@ def interpret_transcription(
 ) -> DialogueDecision:
     """Apply clarification, correction, and memory rules to one transcript."""
     transcription = preprocess_transcription(transcription)
+    reranking = rerank_with_session_memory(transcription, session)
+    transcription = reranking.transcription
     question = transcription.text.strip()
     risk = assess_asr_risk(transcription)
     resolution = None
@@ -82,4 +86,5 @@ def interpret_transcription(
         risk=risk,
         resolution=resolution,
         memory_updated=memory_updated,
+        reranking=reranking,
     )

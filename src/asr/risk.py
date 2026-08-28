@@ -27,6 +27,22 @@ _PERSIAN_TRANSLATION = str.maketrans(
         "\u200c": "",
     }
 )
+_CRITICAL_SLOT_CUES = {
+    "دانشگاه",
+    "شهر",
+    "کشور",
+    "شرکت",
+    "خیابان",
+    "دکتر",
+    "مهندس",
+    "مدل",
+    "شماره",
+    "ساعت",
+    "تاریخ",
+}
+_NEGATION_TERMS = {"باید", "نباید", "هست", "نیست", "بخور", "نخور"}
+_HARMLESS_STYLE_TERMS = {"لطفا", "خواهشا", "خواهشاً"}
+_NUMBER_PATTERN = re.compile(r"^(?:\d+|صفر|یک|دو|سه|چهار|پنج|شش|هفت|هشت|نه|ده|یازده|دوازده|سیزده|چهارده|پانزده|شانزده|هفده|هجده|نوزده|بیست|سی|چهل|پنجاه)$")
 
 
 @dataclass(frozen=True)
@@ -198,6 +214,14 @@ def _variants_at_low_confidence_words(
             alternative_phrase = " ".join(
                 alternative_tokens[alt_start:alt_end]
             ).strip()
+            normalized_pair = {
+                _normalize_token(primary_phrase),
+                _normalize_token(alternative_phrase),
+            }
+            if normalized_pair and normalized_pair <= {
+                _normalize_token(item) for item in _HARMLESS_STYLE_TERMS
+            }:
+                continue
             for phrase in (primary_phrase, alternative_phrase):
                 normalized_phrase = _normalize_token(phrase)
                 if (
@@ -210,9 +234,69 @@ def _variants_at_low_confidence_words(
     return low_words, tuple(variants[:ASR_CLARIFICATION_MAX_OPTIONS])
 
 
+def _is_critical_disagreement(
+    primary_tokens: list[str],
+    primary_start: int,
+    primary_phrase: str,
+    alternative_phrase: str,
+) -> bool:
+    phrases = {
+        _normalize_token(primary_phrase),
+        _normalize_token(alternative_phrase),
+    }
+    if any(_NUMBER_PATTERN.fullmatch(phrase) for phrase in phrases):
+        return True
+    if phrases & {_normalize_token(item) for item in _NEGATION_TERMS}:
+        return True
+    preceding = {
+        _normalize_token(token)
+        for token in primary_tokens[max(0, primary_start - 2) : primary_start]
+    }
+    return bool(preceding & {_normalize_token(item) for item in _CRITICAL_SLOT_CUES})
+
+
+def _variants_at_critical_slots(
+    transcription: TranscriptionResult,
+) -> tuple[str, ...]:
+    primary_tokens = transcription.text.split()
+    normalized_primary = [_normalize_token(token) for token in primary_tokens]
+    variants = []
+    for alternative in _eligible_alternatives(transcription):
+        alternative_tokens = alternative.text.split()
+        normalized_alternative = [_normalize_token(token) for token in alternative_tokens]
+        matcher = SequenceMatcher(
+            None, normalized_primary, normalized_alternative, autojunk=False
+        )
+        for operation, primary_start, primary_end, alt_start, alt_end in matcher.get_opcodes():
+            if operation == "equal":
+                continue
+            primary_phrase = " ".join(primary_tokens[primary_start:primary_end]).strip()
+            alternative_phrase = " ".join(alternative_tokens[alt_start:alt_end]).strip()
+            if not primary_phrase or not alternative_phrase:
+                continue
+            if not _is_critical_disagreement(
+                primary_tokens,
+                primary_start,
+                primary_phrase,
+                alternative_phrase,
+            ):
+                continue
+            for phrase in (primary_phrase, alternative_phrase):
+                normalized = _normalize_token(phrase)
+                if normalized and all(
+                    _normalize_token(item) != normalized for item in variants
+                ):
+                    variants.append(phrase)
+    return tuple(variants[:ASR_CLARIFICATION_MAX_OPTIONS])
+
+
 def assess_asr_risk(transcription: TranscriptionResult) -> ASRRiskAssessment:
     """Request clarification when plausible hypotheses disagree on a weak word."""
     low_words, options = _variants_at_low_confidence_words(transcription)
+    reason = "low_confidence_alternative_disagreement"
+    if len(options) < 2:
+        options = _variants_at_critical_slots(transcription)
+        reason = "critical_slot_alternative_disagreement"
     if len(options) < 2:
         return ASRRiskAssessment(
             requires_clarification=False,
@@ -222,7 +306,7 @@ def assess_asr_risk(transcription: TranscriptionResult) -> ASRRiskAssessment:
     quoted_options = " یا ".join(f"«{option}»" for option in options)
     return ASRRiskAssessment(
         requires_clarification=True,
-        reason="low_confidence_alternative_disagreement",
+        reason=reason,
         low_confidence_words=low_words,
         options=options,
         clarification=f"منظورتان {quoted_options} است؟",

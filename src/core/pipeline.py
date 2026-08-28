@@ -74,9 +74,11 @@ def chat(audio_path, session=None):
     question = dialogue.raw_question
     risk = dialogue.risk
     resolution = dialogue.resolution
+    reranking = dialogue.reranking
     asr_details = raw_transcription.to_dict()
     asr_details["preprocessed"] = transcription.to_dict()
     asr_details["preprocessing_changed"] = raw_transcription != transcription
+    asr_details["reranking"] = reranking.to_dict() if reranking is not None else None
     asr_details["risk"] = risk.to_dict()
 
     asr_details["clarification_resolution"] = (
@@ -104,6 +106,7 @@ def chat(audio_path, session=None):
     metrics["asr_mean_word_confidence"] = transcription.mean_word_confidence
     metrics["asr_alternative_count"] = len(transcription.alternatives)
     metrics["asr_preprocessing_changed"] = raw_transcription != transcription
+    metrics["asr_nbest_reranked"] = bool(reranking is not None and reranking.changed)
     metrics["asr_requires_clarification"] = risk.requires_clarification
     metrics["clarification_resolved"] = bool(
         resolution is not None and resolution.resolved
@@ -127,6 +130,13 @@ def chat(audio_path, session=None):
         risk.low_confidence_words,
         risk.options,
     )
+    if reranking is not None and reranking.changed:
+        logger.info(
+            "asr_nbest_reranked reason=%s original_transcript=%r selected_transcript=%r",
+            reranking.reason,
+            reranking.original_text,
+            reranking.selected_text,
+        )
 
 
     print("\nUSER:")
