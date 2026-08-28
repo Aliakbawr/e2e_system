@@ -1,0 +1,165 @@
+{
+  "all_769": {
+    "recordings": 769,
+    "baseline_em": 0.3992197659297789,
+    "enhanced_em": 0.41092327698309494,
+    "em_delta": 0.011703511053316018,
+    "baseline_mean_f1": 0.7040439662678805,
+    "enhanced_mean_f1": 0.7075025847373212,
+    "mean_f1_delta": 0.003458618469440733,
+    "em_gained": 9,
+    "em_lost": 0,
+    "llm_answers_changed": 13,
+    "cluster_bootstrap_95_ci": {
+      "unit": "semantic_id",
+      "replicates": 5000,
+      "seed": 20260828,
+      "em_delta": {
+        "lower": 0.003952569169960474,
+        "upper": 0.020752269779507136,
+        "probability_of_improvement": 0.9998
+      },
+      "mean_f1_delta": {
+        "lower": 0.0006353460136844452,
+        "upper": 0.0071242608652701276,
+        "probability_of_improvement": 0.9944
+      }
+    }
+  },
+  "development_all": {
+    "recordings": 517,
+    "baseline_em": 0.41392649903288203,
+    "enhanced_em": 0.42359767891682787,
+    "em_delta": 0.009671179883945835,
+    "baseline_mean_f1": 0.7128362691315281,
+    "enhanced_mean_f1": 0.7149562715280464,
+    "mean_f1_delta": 0.002120002396518328,
+    "em_gained": 5,
+    "em_lost": 0,
+    "llm_answers_changed": 8,
+    "cluster_bootstrap_95_ci": {
+      "unit": "semantic_id",
+      "replicates": 5000,
+      "seed": 20260828,
+      "em_delta": {
+        "lower": 0.0019455252918287938,
+        "upper": 0.018975332068311195,
+        "probability_of_improvement": 0.9946
+      },
+      "mean_f1_delta": {
+        "lower": -9.992516346454107e-05,
+        "upper": 0.004513847155194105,
+        "probability_of_improvement": 0.9708
+      }
+    }
+  },
+  "held_out_all": {
+    "recordings": 252,
+    "baseline_em": 0.36904761904761907,
+    "enhanced_em": 0.38492063492063494,
+    "em_delta": 0.015873015873015872,
+    "baseline_mean_f1": 0.6860057893611111,
+    "enhanced_mean_f1": 0.6922106955674603,
+    "mean_f1_delta": 0.00620490620634917,
+    "em_gained": 4,
+    "em_lost": 0,
+    "llm_answers_changed": 5,
+    "cluster_bootstrap_95_ci": {
+      "unit": "semantic_id",
+      "replicates": 5000,
+      "seed": 20260828,
+      "em_delta": {
+        "lower": 0.0,
+        "upper": 0.03629399569021805,
+        "probability_of_improvement": 0.95
+      },
+      "mean_f1_delta": {
+        "lower": -0.0006519377011952194,
+        "upper": 0.016684667311312677,
+        "probability_of_improvement": 0.9032
+      }
+    }
+  },
+  "changed_contexts_all": {
+    "recordings": 59,
+    "baseline_em": 0.3898305084745763,
+    "enhanced_em": 0.5423728813559322,
+    "em_delta": 0.15254237288135591,
+    "baseline_mean_f1": 0.7607312179152542,
+    "enhanced_mean_f1": 0.8058104993220339,
+    "mean_f1_delta": 0.04507928140677964,
+    "em_gained": 9,
+    "em_lost": 0,
+    "llm_answers_changed": 13,
+    "cluster_bootstrap_95_ci": {
+      "unit": "semantic_id",
+      "replicates": 5000,
+      "seed": 20260828,
+      "em_delta": {
+        "lower": 0.06349206349206349,
+        "upper": 0.2631578947368421,
+        "probability_of_improvement": 0.9998
+      },
+      "mean_f1_delta": {
+        "lower": 0.008295505205507661,
+        "upper": 0.09095530767556234,
+        "probability_of_improvement": 0.9938
+      }
+    }
+  },
+  "changed_contexts_development": {
+    "recordings": 37,
+    "baseline_em": 0.3783783783783784,
+    "enhanced_em": 0.5135135135135135,
+    "em_delta": 0.1351351351351351,
+    "baseline_mean_f1": 0.7811870561621621,
+    "enhanced_mean_f1": 0.8108097923513514,
+    "mean_f1_delta": 0.029622736189189314,
+    "em_gained": 5,
+    "em_lost": 0,
+    "llm_answers_changed": 8,
+    "cluster_bootstrap_95_ci": {
+      "unit": "semantic_id",
+      "replicates": 5000,
+      "seed": 20260828,
+      "em_delta": {
+        "lower": 0.029390756302521016,
+        "upper": 0.2571428571428571,
+        "probability_of_improvement": 0.996
+      },
+      "mean_f1_delta": {
+        "lower": 2.4118714285712173e-05,
+        "upper": 0.062391230608952686,
+        "probability_of_improvement": 0.975
+      }
+    }
+  },
+  "changed_contexts_held_out": {
+    "recordings": 22,
+    "baseline_em": 0.4090909090909091,
+    "enhanced_em": 0.5909090909090909,
+    "em_delta": 0.18181818181818182,
+    "baseline_mean_f1": 0.7263282172272727,
+    "enhanced_mean_f1": 0.7974025974090909,
+    "mean_f1_delta": 0.07107438018181822,
+    "em_gained": 4,
+    "em_lost": 0,
+    "llm_answers_changed": 5,
+    "cluster_bootstrap_95_ci": {
+      "unit": "semantic_id",
+      "replicates": 5000,
+      "seed": 20260828,
+      "em_delta": {
+        "lower": 0.0,
+        "upper": 0.391304347826087,
+        "probability_of_improvement": 0.958
+      },
+      "mean_f1_delta": {
+        "lower": -0.007438016500000003,
+        "upper": 0.17489448053214282,
+        "probability_of_improvement": 0.9194
+      }
+    }
+  },
+  "interpretation": "Only explicitly recovered ASR contexts differ; unchanged frozen audio-enhanced Gemma predictions are reused exactly."
+}

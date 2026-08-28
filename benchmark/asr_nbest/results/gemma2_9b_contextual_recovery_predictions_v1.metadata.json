@@ -1,0 +1,39 @@
+{
+  "stage": "gemma2_9b_vosk_path_v1",
+  "condition": "vosk_asr_path",
+  "calls_expected": 769,
+  "calls_recorded": 769,
+  "successful": 769,
+  "failed": 0,
+  "model": "Gemma 2 9B IT, local NF4 4-bit archive",
+  "model_path": "/home/aliakbar/projects/e2e_system/models/llm/gemma-2-9b-it-4bit",
+  "model_directory_sha256": "1426fbad4c6fcb5c980cfba84c456e859a79e4d1134eea8fe9938b29698baff7",
+  "input_path": "/home/aliakbar/projects/e2e_system/benchmark/asr_nbest/results/contextual_recovery_fleurs_qa_eval_input_v1.csv",
+  "input_sha256": "46dd85d63886c77b62644bd8af707dc88ef7b6d304407d177dee9e10b877fb55",
+  "oracle_path": "/home/aliakbar/projects/e2e_system/benchmark/asr_llm_error_propagation/llm/gemma2_9b_oracle_predictions_v1.csv",
+  "oracle_sha256": "286cc1990fc74d285524ab72c98dd356fff4f796ae61f8438693604eda49ee63",
+  "output_path": "/home/aliakbar/projects/e2e_system/benchmark/asr_nbest/results/gemma2_9b_contextual_recovery_predictions_v1.csv",
+  "output_sha256": "b05f055344f66a4b12d2a8b242006ccb7c75a850e35a093c6a91dd04b4f244f0",
+  "prompt_template_sha256": "849c716d847c5666e18d26e658ffee0d6c0b6d51576cd3f7d6940560742347bc",
+  "prompt_template": "متن زیر تنها منبع اطلاعات شماست.\n\nفقط بر اساس اطلاعات موجود در متن به سؤال پاسخ دهید.\nاز اطلاعات خارج از متن استفاده نکنید و حدس نزنید.\n\nپاسخ را تا حد امکان کوتاه و مستقیم بنویسید.\nاگر پاسخ از متن قابل تعیین نیست، فقط بنویسید:\nنامشخص\n\nمتن:\n{context}\n\nسؤال:\n{question}\n\nپاسخ:",
+  "only_condition_difference_from_oracle": "context=Vosk asr_normalized instead of context=reference_normalized",
+  "context_column": "asr_normalized",
+  "question_column": "question",
+  "generation": {
+    "chat_template": true,
+    "add_generation_prompt": true,
+    "do_sample": false,
+    "max_new_tokens": 150,
+    "input_max_length": 2048,
+    "pad_token_id": "tokenizer.eos_token_id"
+  },
+  "scoring": {
+    "normalizer": "normalize_persian_qa imported from frozen Oracle runner",
+    "em": "exact equality after normalization",
+    "f1": "whitespace-token multiset overlap after normalization"
+  },
+  "descriptive_metrics": {
+    "asr_em_rate_all_769": 0.41092327698309494,
+    "asr_mean_f1_all_769": 0.7075025847373212
+  }
+}

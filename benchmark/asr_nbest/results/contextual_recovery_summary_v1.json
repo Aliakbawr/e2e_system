@@ -1,0 +1,42 @@
+{
+  "stage": "explicit_correction_contextual_nbest_recovery_v1",
+  "case_construction": "Reference text labels a better in-gap single-replacement hypothesis offline; runtime receives only explicit correction memory and N-best evidence.",
+  "summary": {
+    "development": {
+      "positive_recovery_cases": 51,
+      "target_recovered": 37,
+      "target_recovery_rate": 0.7254901960784313,
+      "wrong_alternative_selections": 0,
+      "mean_recording_wer_before": 0.1591896288012092,
+      "mean_recording_wer_after": 0.11883047894321122,
+      "answer_span_rate_before": 0.5490196078431373,
+      "answer_span_rate_after": 0.6862745098039216,
+      "no_memory_control_changes": 0,
+      "irrelevant_context_control_changes": 0
+    },
+    "held_out": {
+      "positive_recovery_cases": 27,
+      "target_recovered": 22,
+      "target_recovery_rate": 0.8148148148148148,
+      "wrong_alternative_selections": 0,
+      "mean_recording_wer_before": 0.13006628549997132,
+      "mean_recording_wer_after": 0.08392863379302908,
+      "answer_span_rate_before": 0.6296296296296297,
+      "answer_span_rate_after": 0.7777777777777778,
+      "no_memory_control_changes": 0,
+      "irrelevant_context_control_changes": 0
+    },
+    "all": {
+      "positive_recovery_cases": 78,
+      "target_recovered": 59,
+      "target_recovery_rate": 0.7564102564102564,
+      "wrong_alternative_selections": 0,
+      "mean_recording_wer_before": 0.14910847150462683,
+      "mean_recording_wer_after": 0.10674907100660971,
+      "answer_span_rate_before": 0.5769230769230769,
+      "answer_span_rate_after": 0.717948717948718,
+      "no_memory_control_changes": 0,
+      "irrelevant_context_control_changes": 0
+    }
+  }
+}

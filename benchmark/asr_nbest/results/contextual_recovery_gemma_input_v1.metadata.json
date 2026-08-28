@@ -1,0 +1,11 @@
+{
+  "stage": "contextual_recovery_gemma_input_v1",
+  "recordings": 769,
+  "changed_contexts": 59,
+  "reused_frozen_predictions": 710,
+  "new_gemma_calls_required": 59,
+  "source_sha256": "b4ad09edfe14be8ca743749de5df4d92ee45f51eb1a0412cdb33b18fe6f119e4",
+  "cases_sha256": "6cf1edbec0edf6b03a51f561fdce101a265dcfe749e746a8b8dc38dfbf499a47",
+  "output_sha256": "46dd85d63886c77b62644bd8af707dc88ef7b6d304407d177dee9e10b877fb55",
+  "initial_prediction_checkpoint_sha256": "fa979a6fa49c59dd7e0b78f09cb12f3bfff57d5e2d88180d285a3b3523c384ef"
+}
