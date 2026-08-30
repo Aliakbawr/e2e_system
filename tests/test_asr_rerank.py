@@ -83,6 +83,64 @@ class ASRNBestRerankingTests(unittest.TestCase):
         risk = assess_asr_risk(transcription)
         self.assertFalse(risk.requires_clarification)
 
+    def test_noisy_nbest_reply_resolves_original_question_without_looping(self):
+        session = ChatSession()
+        session.set_pending_clarification(
+            "اگر من دو سیب داشته باشم و یکی را بخورم چند سیب دارم",
+            ("سیب", "سیم"),
+        )
+        transcription = TranscriptionResult(
+            text="سیبه",
+            words=(RecognizedWord("سیبه", 0.51),),
+            alternatives=(
+                TranscriptAlternative("سیبه", decoder_score=56.32),
+                TranscriptAlternative("سیب", decoder_score=56.08),
+                TranscriptAlternative("سیبل", decoder_score=53.99),
+            ),
+        )
+
+        decision = interpret_transcription(transcription, session)
+
+        self.assertEqual(decision.action, "answer")
+        self.assertEqual(
+            decision.effective_question,
+            "اگر من دو سیب داشته باشم و یکی را بخورم چند سیب دارم",
+        )
+        self.assertTrue(decision.resolution.resolved)
+        self.assertEqual(decision.resolution.selected_option, "سیب")
+        self.assertEqual(decision.resolution.method, "nbest_option_text")
+        self.assertIsNone(session.pending_clarification)
+
+    def test_repeated_noncritical_word_suppresses_spurious_clarification(self):
+        transcription = TranscriptionResult(
+            text="اگر دو سیب داشته باشم و یکی از سیب‌ها را بخورم",
+            words=(
+                RecognizedWord("اگر", 0.99),
+                RecognizedWord("دو", 0.99),
+                RecognizedWord("سیب", 0.50),
+                RecognizedWord("داشته", 0.99),
+                RecognizedWord("باشم", 0.99),
+                RecognizedWord("و", 0.99),
+                RecognizedWord("یکی", 0.99),
+                RecognizedWord("از", 0.99),
+                RecognizedWord("سیب‌ها", 0.99),
+                RecognizedWord("را", 0.99),
+                RecognizedWord("بخورم", 0.99),
+            ),
+            alternatives=(
+                TranscriptAlternative(
+                    "اگر دو سیب داشته باشم و یکی از سیب‌ها را بخورم",
+                    decoder_score=100.0,
+                ),
+                TranscriptAlternative(
+                    "اگر دو سیم داشته باشم و یکی از سیب‌ها را بخورم",
+                    decoder_score=99.5,
+                ),
+            ),
+        )
+
+        self.assertFalse(assess_asr_risk(transcription).requires_clarification)
+
 
 if __name__ == "__main__":
     unittest.main()

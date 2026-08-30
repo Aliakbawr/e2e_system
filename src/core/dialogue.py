@@ -6,7 +6,7 @@ from src.asr.risk import (
     ASRRiskAssessment,
     ClarificationResolution,
     assess_asr_risk,
-    resolve_clarification_reply,
+    resolve_clarification_transcription,
 )
 from src.asr.rerank import NBestReranking, rerank_with_session_memory
 from src.asr.text import preprocess_transcription
@@ -42,18 +42,13 @@ def interpret_transcription(
 
     if session is not None and session.pending_clarification is not None:
         pending = session.pending_clarification
-        if question and not risk.requires_clarification:
-            resolution = resolve_clarification_reply(
+        if question:
+            resolution = resolve_clarification_transcription(
                 pending.original_text,
                 pending.options,
-                question,
+                transcription,
             )
             if resolution.resolved:
-                session.remember_entity(
-                    label="عبارت تأییدشده",
-                    value=resolution.selected_option,
-                    context=resolution.resolved_question,
-                )
                 session.remember_correction(
                     original=pending.options[0],
                     corrected=resolution.selected_option,
@@ -65,6 +60,9 @@ def interpret_transcription(
     if not question:
         action = "retry"
         effective_question = ""
+    elif resolution is not None and resolution.resolved:
+        action = "answer"
+        effective_question = resolution.resolved_question
     elif risk.requires_clarification:
         action = "clarify"
         effective_question = question
@@ -73,11 +71,7 @@ def interpret_transcription(
             session.set_pending_clarification(question, risk.options)
     else:
         action = "answer"
-        effective_question = (
-            resolution.resolved_question
-            if resolution is not None and resolution.resolved
-            else question
-        )
+        effective_question = question
 
     return DialogueDecision(
         action=action,

@@ -154,6 +154,85 @@ def resolve_clarification_reply(
     )
 
 
+def resolve_clarification_transcription(
+    original_text: str,
+    options: tuple[str, ...],
+    transcription: TranscriptionResult,
+) -> ClarificationResolution:
+    """Resolve a reply from the primary transcript and agreeing N-best evidence.
+
+    A short clarification reply is often the hardest possible ASR input.  Treat
+    an option found in an eligible alternative as evidence for the pending
+    question instead of opening a second, unrelated clarification.  Conflicting
+    option selections remain unresolved.
+    """
+    hypotheses = [transcription.text]
+    hypotheses.extend(item.text for item in _eligible_alternatives(transcription))
+    resolutions = [
+        resolution
+        for hypothesis in hypotheses
+        if (
+            resolution := resolve_clarification_reply(
+                original_text,
+                options,
+                hypothesis,
+            )
+        ).resolved
+    ]
+    selected = {item.selected_option for item in resolutions}
+    if len(selected) != 1:
+        return ClarificationResolution(resolved=False)
+
+    resolution = resolutions[0]
+    if not resolve_clarification_reply(
+        original_text,
+        options,
+        transcription.text,
+    ).resolved:
+        return ClarificationResolution(
+            resolved=True,
+            selected_option=resolution.selected_option,
+            resolved_question=resolution.resolved_question,
+            method="nbest_option_text",
+        )
+    return resolution
+
+
+def _lexical_base(token: str) -> str:
+    normalized = _normalize_token(token)
+    for suffix in ("هایی", "های", "ها"):
+        if normalized.endswith(suffix) and len(normalized) - len(suffix) >= 3:
+            return normalized[: -len(suffix)]
+    return normalized
+
+
+def _has_repeated_noncritical_support(
+    primary_tokens: list[str],
+    primary_start: int,
+    primary_end: int,
+    primary_phrase: str,
+    alternative_phrase: str,
+) -> bool:
+    """Return whether another token in the utterance confirms a weak noun."""
+    if primary_end - primary_start != 1:
+        return False
+    primary_base = _lexical_base(primary_phrase)
+    if not primary_base:
+        return False
+    normalized_pair = {
+        _normalize_token(primary_phrase),
+        _normalize_token(alternative_phrase),
+    }
+    if any(_NUMBER_PATTERN.fullmatch(item) for item in normalized_pair):
+        return False
+    if normalized_pair & {_normalize_token(item) for item in _NEGATION_TERMS}:
+        return False
+    return any(
+        index != primary_start and _lexical_base(token) == primary_base
+        for index, token in enumerate(primary_tokens)
+    )
+
+
 def _eligible_alternatives(transcription: TranscriptionResult):
     scored = [
         alternative.decoder_score
@@ -214,6 +293,14 @@ def _variants_at_low_confidence_words(
             alternative_phrase = " ".join(
                 alternative_tokens[alt_start:alt_end]
             ).strip()
+            if _has_repeated_noncritical_support(
+                primary_tokens,
+                primary_start,
+                primary_end,
+                primary_phrase,
+                alternative_phrase,
+            ):
+                continue
             normalized_pair = {
                 _normalize_token(primary_phrase),
                 _normalize_token(alternative_phrase),
