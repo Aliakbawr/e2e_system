@@ -12,6 +12,7 @@ import soundfile as sf
 
 from piper.voice import PiperVoice
 from config.settings import TTS_MODEL_PATH, TTS_CONFIG_PATH
+from src.tts.numbers import verbalize_numbers
 
 voice = PiperVoice.load(TTS_MODEL_PATH, TTS_CONFIG_PATH)
 normalizer = hazm.Normalizer()
@@ -27,7 +28,7 @@ PERSIAN_MAP = {
 
 
 def normalize_text(text: str) -> str:
-    text = normalizer.normalize(str(text))
+    text = normalizer.normalize(verbalize_numbers(text))
 
     for k, v in PERSIAN_MAP.items():
         text = text.replace(k, v)
