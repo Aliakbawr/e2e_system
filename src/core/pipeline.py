@@ -1,13 +1,22 @@
 import logging
 import time
 
-from config.settings import AUDIO_OUTPUT_DIR
+from config.settings import (
+    AUDIO_OUTPUT_DIR,
+    TTS_STREAM_MAX_CHARS,
+    TTS_STREAM_SOFT_MIN_CHARS,
+)
 from src.asr.text import preprocess_transcription
 from src.asr.transcriber import transcribe_audio_detailed
 from src.audio.player import play_audio
 from src.core.dialogue import interpret_transcription
-from src.llm.generator import generate_answer
-from src.tts.synthesizer import synthesize_speech
+from src.llm.generator import (
+    clean_answer,
+    count_answer_tokens,
+    generate_answer_stream,
+)
+from src.tts.synthesizer import StreamingSpeechOutput, synthesize_speech
+from src.tts.text_stream import PhraseBuffer
 
 
 logger = logging.getLogger(__name__)
@@ -233,74 +242,97 @@ def chat(audio_path, session=None):
 
     llm_question = dialogue.effective_question
 
-    llm_result = generate_answer(
-        llm_question,
-        history=session.messages() if session is not None else None,
-        memory=session.memory_prompt() if session is not None else None,
-        turn_context=(
-            "این پیام از پاسخ کاربر به رفع ابهام بازسازی شده است. "
-            "در پاسخ، واژه، عدد یا نفی تأییدشده را صریحاً تکرار کن."
-            if resolution is not None and resolution.resolved
-            else None
-        ),
+    output_audio = AUDIO_OUTPUT_DIR / "response.wav"
+    speech_output = StreamingSpeechOutput(str(output_audio))
+    phrase_buffer = PhraseBuffer(
+        soft_min_chars=TTS_STREAM_SOFT_MIN_CHARS,
+        max_chars=TTS_STREAM_MAX_CHARS,
     )
+    raw_parts = []
+    phrase_count = 0
+    stream_started = time.monotonic()
+    first_token_at = None
+    first_phrase_at = None
 
-    answer = llm_result["answer"]
+    try:
+        fragments = generate_answer_stream(
+            llm_question,
+            history=session.messages() if session is not None else None,
+            memory=session.memory_prompt() if session is not None else None,
+            turn_context=(
+                "این پیام از پاسخ کاربر به رفع ابهام بازسازی شده است. "
+                "در پاسخ، واژه، عدد یا نفی تأییدشده را صریحاً تکرار کن."
+                if resolution is not None and resolution.resolved
+                else None
+            ),
+        )
+        for fragment in fragments:
+            if first_token_at is None and fragment:
+                first_token_at = time.monotonic()
+            raw_parts.append(fragment)
+            for phrase in phrase_buffer.feed(fragment):
+                if first_phrase_at is None:
+                    first_phrase_at = time.monotonic()
+                speech_output.submit(phrase)
+                phrase_count += 1
+
+        for phrase in phrase_buffer.finish():
+            if first_phrase_at is None:
+                first_phrase_at = time.monotonic()
+            speech_output.submit(phrase)
+            phrase_count += 1
+
+        metrics["llm_time"] = time.monotonic() - stream_started
+        answer = clean_answer("".join(raw_parts))
+        if not answer:
+            answer = "متوجه سوال نشدم"
+            speech_output.submit(answer)
+            phrase_count += 1
+            if first_phrase_at is None:
+                first_phrase_at = time.monotonic()
+    finally:
+        tts_result = speech_output.finish()
+
+    output_tokens = count_answer_tokens(answer)
+    metrics["llm_time_to_first_token"] = (
+        first_token_at - stream_started if first_token_at is not None else None
+    )
+    metrics["llm_time_to_first_phrase"] = (
+        first_phrase_at - stream_started if first_phrase_at is not None else None
+    )
+    metrics["tts_phrase_count"] = phrase_count
+    metrics["time_to_first_audio"] = tts_result["time_to_first_audio"]
+    metrics["audio_duration"] = tts_result["audio_duration"]
+    metrics["tts_time"] = tts_result["tts_time"]
 
     if session is not None and answer:
         session.add_turn(llm_question, answer)
 
-
     print("\nBOT:")
     print(answer)
 
-
-    metrics["llm_time"] = (
-        llm_result["latency"]
-    )
-
     logger.info(
-        "llm_completed duration_sec=%.3f output_tokens=%d "
+        "llm_stream_completed duration_sec=%.3f first_token_sec=%s "
+        "first_phrase_sec=%s output_tokens=%d phrase_count=%d "
         "retained_session_turns=%d query=%r answer=%r",
         metrics["llm_time"],
-        llm_result["tokens"],
+        metrics["llm_time_to_first_token"],
+        metrics["llm_time_to_first_phrase"],
+        output_tokens,
+        phrase_count,
         len(session) if session is not None else 0,
         llm_question,
         answer,
     )
 
-
-    # =====================
-    # TTS
-    # =====================
-
-    output_audio = AUDIO_OUTPUT_DIR / "response.wav"
-
-
-    tts_result = synthesize_speech(
-        answer,
-        str(output_audio)
-    )
-
-
-    metrics["tts_time"] = (
-        tts_result["tts_time"]
-    )
-
     logger.info(
-        "tts_completed duration_sec=%.3f audio_duration_sec=%.3f rtf=%.3f",
+        "tts_stream_completed duration_sec=%.3f audio_duration_sec=%.3f "
+        "rtf=%.3f first_audio_sec=%s phrase_count=%d",
         metrics["tts_time"],
         tts_result["audio_duration"],
         tts_result["tts_rtf"],
-    )
-
-
-    # =====================
-    # Audio playback
-    # =====================
-
-    play_audio(
-        str(output_audio)
+        metrics["time_to_first_audio"],
+        phrase_count,
     )
 
     logger.info("chat_turn_completed metrics=%s", metrics)

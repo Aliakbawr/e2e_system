@@ -90,6 +90,12 @@ TTS_CONFIG_PATH = os.getenv(
     "PERSIAN_ASSISTANT_TTS_CONFIG_PATH",
     str(MODELS_DIR / "tts/piper/fa_IR-gyro-medium.onnx.json"),
 )
+TTS_STREAM_SOFT_MIN_CHARS = int(
+    os.getenv("PERSIAN_ASSISTANT_TTS_STREAM_SOFT_MIN_CHARS", "30")
+)
+TTS_STREAM_MAX_CHARS = int(
+    os.getenv("PERSIAN_ASSISTANT_TTS_STREAM_MAX_CHARS", "60")
+)
 
 MAX_LLM_TOKENS = int(os.getenv("PERSIAN_ASSISTANT_MAX_LLM_TOKENS", "150"))
 MAX_LLM_INPUT_TOKENS = int(

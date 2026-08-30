@@ -68,6 +68,8 @@ The defaults live in `config/settings.py`. These environment variables can overr
 - `PERSIAN_ASSISTANT_LLM_MODEL_PATH`
 - `PERSIAN_ASSISTANT_TTS_MODEL_PATH`
 - `PERSIAN_ASSISTANT_TTS_CONFIG_PATH`
+- `PERSIAN_ASSISTANT_TTS_STREAM_SOFT_MIN_CHARS` (default: `30`)
+- `PERSIAN_ASSISTANT_TTS_STREAM_MAX_CHARS` (default: `60`)
 - `PERSIAN_ASSISTANT_MIC_DEVICE`
 - `PERSIAN_ASSISTANT_AUDIO_PLAYER`
 - `PERSIAN_ASSISTANT_VAD_MODEL_PATH`
@@ -105,7 +107,11 @@ treat contextual corrections as global replacements, and is cleared when the
 process exits or the session is cleared.
 
 Runtime events are printed to the console and written to a rotating UTF-8 log.
-To monitor ASR confidence, alternatives, session size, stage latency, and errors:
+Normal answers stream from Gemma into phrase-sized Piper requests and then into
+audio playback. Metrics include time to the first generated token, first phrase,
+and first audio, along with phrase count and total synthesis time. Clarification
+and retry prompts continue to use the simpler single-utterance TTS path. To
+monitor ASR confidence, alternatives, session size, stage latency, and errors:
 
 ```bash
 tail -f data/logs/chatbot.log

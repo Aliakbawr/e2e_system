@@ -1,10 +1,12 @@
 import time
 import re
+import threading
 import torch
 
 from transformers import (
     AutoTokenizer,
-    AutoModelForCausalLM
+    AutoModelForCausalLM,
+    TextIteratorStreamer,
 )
 
 from config.settings import (
@@ -35,6 +37,7 @@ def clean_answer(text):
 
     text = text.replace("*", "")
     text = text.replace("**", "")
+    text = text.replace("#", "")
 
     text = re.sub(
         r"\s+",
@@ -193,3 +196,53 @@ def generate_answer(question, history=None, memory=None, turn_context=None):
         "latency":latency,
         "tokens":tokens
     }
+
+
+def generate_answer_stream(question, history=None, memory=None, turn_context=None):
+    """Yield newly decoded answer text while Gemma is still generating."""
+    if not question or not str(question).strip():
+        yield "متوجه سوال نشدم"
+        return
+
+    text = _render_with_recent_history(question, history, memory, turn_context)
+    inputs = tokenizer(
+        text,
+        return_tensors="pt",
+        truncation=True,
+        max_length=MAX_LLM_INPUT_TOKENS,
+    ).to(llm_model.device)
+    streamer = TextIteratorStreamer(
+        tokenizer,
+        skip_prompt=True,
+        skip_special_tokens=True,
+    )
+    errors = []
+
+    def run_generation():
+        try:
+            with torch.inference_mode():
+                llm_model.generate(
+                    **inputs,
+                    streamer=streamer,
+                    max_new_tokens=MAX_LLM_TOKENS,
+                    do_sample=False,
+                    pad_token_id=tokenizer.eos_token_id,
+                )
+        except BaseException as exc:
+            errors.append(exc)
+            streamer.end()
+
+    generation_thread = threading.Thread(target=run_generation, daemon=True)
+    generation_thread.start()
+    try:
+        yield from streamer
+    finally:
+        generation_thread.join()
+
+    if errors:
+        raise RuntimeError("LLM streaming generation failed") from errors[0]
+
+
+def count_answer_tokens(answer):
+    """Count generated tokens using the runtime tokenizer."""
+    return len(tokenizer.encode(answer, add_special_tokens=False))
