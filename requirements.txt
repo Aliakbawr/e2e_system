@@ -8,6 +8,7 @@ piper-tts
 hazm
 librosa
 numpy
+onnxruntime>=1.17.1,<2
 scipy
 sounddevice
 soundfile

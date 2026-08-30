@@ -28,6 +28,25 @@ os.environ.setdefault("MPLCONFIGDIR", str(CACHE_DIR / "matplotlib"))
 MIC_DEVICE = int(os.getenv("PERSIAN_ASSISTANT_MIC_DEVICE", "0"))
 SAMPLE_RATE = 16000
 AUDIO_PLAYER = os.getenv("PERSIAN_ASSISTANT_AUDIO_PLAYER", "paplay")
+
+# Voice activity detection (Silero ONNX)
+VAD_MODEL_PATH = os.getenv(
+    "PERSIAN_ASSISTANT_VAD_MODEL_PATH",
+    str(MODELS_DIR / "vad/silero/silero_vad.onnx"),
+)
+VAD_THRESHOLD = float(os.getenv("PERSIAN_ASSISTANT_VAD_THRESHOLD", "0.5"))
+VAD_MIN_SPEECH_MS = int(
+    os.getenv("PERSIAN_ASSISTANT_VAD_MIN_SPEECH_MS", "150")
+)
+VAD_MIN_SILENCE_MS = int(
+    os.getenv("PERSIAN_ASSISTANT_VAD_MIN_SILENCE_MS", "900")
+)
+VAD_PRE_ROLL_MS = int(os.getenv("PERSIAN_ASSISTANT_VAD_PRE_ROLL_MS", "300"))
+VAD_POST_ROLL_MS = int(os.getenv("PERSIAN_ASSISTANT_VAD_POST_ROLL_MS", "200"))
+VAD_MAX_UTTERANCE_SEC = float(
+    os.getenv("PERSIAN_ASSISTANT_VAD_MAX_UTTERANCE_SEC", "30")
+)
+
 # ASR (Vosk)
 ASR_MODEL_NAME = "vosk-model-fa-0.42"
 ASR_LOG_LEVEL = int(os.getenv("PERSIAN_ASSISTANT_VOSK_LOG_LEVEL", "-1"))

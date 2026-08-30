@@ -1,115 +1,97 @@
-import numpy as np
-import sounddevice as sd
-import soundfile as sf
+"""Hands-free microphone capture using streaming voice activity detection."""
+
 import os
 import warnings
-import threading
+from pathlib import Path
 
-from config.settings import AUDIO_INPUT_DIR, MIC_DEVICE, SAMPLE_RATE
+import sounddevice as sd
+import soundfile as sf
+
+from config.settings import (
+    AUDIO_INPUT_DIR,
+    MIC_DEVICE,
+    SAMPLE_RATE,
+    VAD_MAX_UTTERANCE_SEC,
+    VAD_MIN_SILENCE_MS,
+    VAD_MIN_SPEECH_MS,
+    VAD_MODEL_PATH,
+    VAD_POST_ROLL_MS,
+    VAD_PRE_ROLL_MS,
+    VAD_THRESHOLD,
+)
+from src.audio.vad import SileroVAD, UtteranceEndpointDetector
 
 
 OUTPUT_PATH = AUDIO_INPUT_DIR / "input.wav"
 
-# Suppress ALSA warnings
-warnings.filterwarnings('ignore')
-os.environ['ALSA_CARD'] = 'default'
-os.environ['PULSE_LATENCY_MSEC'] = '10'
+warnings.filterwarnings("ignore")
+os.environ["ALSA_CARD"] = "default"
+os.environ["PULSE_LATENCY_MSEC"] = "10"
 
 
-def get_available_devices():
+def get_available_devices() -> None:
     """List all available audio input devices."""
-    devices = sd.query_devices()
     print("Available audio devices:")
-    for i, device in enumerate(devices):
-        if device['max_input_channels'] > 0:
-            print(f"  {i}: {device['name']} (inputs: {device['max_input_channels']})")
+    for index, device in enumerate(sd.query_devices()):
+        if device["max_input_channels"] > 0:
+            print(f"  {index}: {device['name']} (inputs: {device['max_input_channels']})")
 
 
-def record_until_enter():
-
-    AUDIO_INPUT_DIR.mkdir(parents=True, exist_ok=True)
-
-
-    input(
-        "\nPress Enter to start recording..."
+def _capture_from_device(device: int | None, output_path: Path) -> str:
+    vad = SileroVAD(VAD_MODEL_PATH)
+    endpoint = UtteranceEndpointDetector(
+        sample_rate=SAMPLE_RATE,
+        chunk_samples=vad.chunk_samples,
+        threshold=VAD_THRESHOLD,
+        min_speech_ms=VAD_MIN_SPEECH_MS,
+        min_silence_ms=VAD_MIN_SILENCE_MS,
+        pre_roll_ms=VAD_PRE_ROLL_MS,
+        post_roll_ms=VAD_POST_ROLL_MS,
+        max_utterance_sec=VAD_MAX_UTTERANCE_SEC,
     )
 
+    print("\n🎤 Listening... Speak when you are ready (Ctrl+C to exit).")
+    with sd.InputStream(
+        samplerate=SAMPLE_RATE,
+        channels=1,
+        dtype="float32",
+        device=device,
+        blocksize=vad.chunk_samples,
+    ) as stream:
+        while True:
+            chunk, overflowed = stream.read(vad.chunk_samples)
+            if overflowed:
+                print("Warning: microphone input overflowed; continuing...")
 
-    print("\nListening... Speak now")
-    print("Press Enter to stop\n")
+            mono = chunk[:, 0]
+            event = endpoint.process(mono, vad.probability(mono))
+            if event == "start":
+                print("🗣️  Speech detected...")
+            elif event == "end":
+                break
 
-    # Use blocking read instead of callback to avoid PortAudio threading issues
-    frames = []
-    stop_recording = threading.Event()
-    
-    def recording_thread():
-        """Run recording in a separate thread to handle blocking reads."""
-        try:
-            # Try with the configured device first
-            device = MIC_DEVICE
-            try:
-                with sd.InputStream(
-                    samplerate=SAMPLE_RATE,
-                    channels=1,
-                    device=device,
-                    blocksize=4096
-                ) as stream:
-                    while not stop_recording.is_set():
-                        try:
-                            data = stream.read(4096)
-                            frames.append(data[0])
-                        except Exception as e:
-                            print(f"Error reading from stream: {e}")
-                            break
-            except (OSError, sd.PortAudioError) as e:
-                print(f"Warning: Could not open device {device}. Trying default device...")
-                get_available_devices()
-                # Fall back to default device
-                with sd.InputStream(
-                    samplerate=SAMPLE_RATE,
-                    channels=1,
-                    device=None,  # Use default device
-                    blocksize=4096
-                ) as stream:
-                    while not stop_recording.is_set():
-                        try:
-                            data = stream.read(4096)
-                            frames.append(data[0])
-                        except Exception as e:
-                            print(f"Error reading from stream: {e}")
-                            break
-        except Exception as e:
-            print(f"Fatal error in recording: {e}")
-            raise
-    
-    # Start recording thread
-    rec_thread = threading.Thread(target=recording_thread, daemon=True)
-    rec_thread.start()
-    
-    # Wait for user to press Enter to stop
-    input()
-    
-    # Stop recording
-    stop_recording.set()
-    rec_thread.join(timeout=1.0)
+    audio = endpoint.audio()
+    if audio.size == 0:
+        raise RuntimeError("No audio captured")
+
+    sf.write(str(output_path), audio, SAMPLE_RATE, subtype="PCM_16")
+    print(f"🛑 Speech ended. Saved: {output_path}")
+    return str(output_path)
 
 
-    if len(frames) == 0:
-        print("No audio captured")
-        return None
+def record_utterance(output_path: str | Path | None = None) -> str:
+    """Wait for speech and record until the configured silence endpoint."""
+    path = Path(output_path) if output_path else OUTPUT_PATH
+    path.parent.mkdir(parents=True, exist_ok=True)
 
-    audio = np.concatenate(frames)
-
-    sf.write(
-        str(OUTPUT_PATH),
-        audio,
-        SAMPLE_RATE
-    )
-
-
-    print(
-        f"Saved: {OUTPUT_PATH}"
-    )
+    try:
+        return _capture_from_device(MIC_DEVICE, path)
+    except (OSError, sd.PortAudioError):
+        print(f"Warning: Could not open device {MIC_DEVICE}. Trying default device...")
+        get_available_devices()
+        return _capture_from_device(None, path)
 
 
-    return str(OUTPUT_PATH)
+def record_until_enter(output_path: str | Path | None = None) -> str:
+    """Backward-compatible alias for the previous microphone API."""
+    return record_utterance(output_path)

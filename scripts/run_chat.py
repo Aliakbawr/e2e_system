@@ -1,6 +1,6 @@
 import logging
 
-from src.audio.microphone import record_until_enter
+from src.audio.microphone import record_utterance
 from src.core.pipeline import chat
 from src.core.session import ChatSession
 from src.utils.logging import setup_logging
@@ -17,7 +17,7 @@ def main():
 
         try:
 
-            audio_path = record_until_enter()
+            audio_path = record_utterance()
             if audio_path is None:
                 continue
 

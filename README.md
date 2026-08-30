@@ -3,7 +3,7 @@
 Local Persian speech assistant with an end-to-end runtime pipeline:
 
 ```text
-microphone/WAV -> Vosk Persian ASR -> Gemma 2 9B -> Piper Persian TTS -> audio playback
+microphone -> Silero VAD -> Vosk Persian ASR -> Gemma 2 9B -> Piper Persian TTS -> audio playback
 ```
 
 Research evaluations are isolated under [`benchmark/`](benchmark/README.md). The rest of this repository is the deployable chatbot application.
@@ -44,7 +44,9 @@ From the repository root:
 python main.py
 ```
 
-Press Enter to begin recording and Enter again to stop. Use Ctrl+C to exit.
+The microphone waits for speech automatically. After you finish speaking and the
+configured silence interval passes, processing starts. Listening resumes after
+the bot finishes playing its answer. Use Ctrl+C while waiting to exit.
 
 Alternative utilities:
 
@@ -68,6 +70,13 @@ The defaults live in `config/settings.py`. These environment variables can overr
 - `PERSIAN_ASSISTANT_TTS_CONFIG_PATH`
 - `PERSIAN_ASSISTANT_MIC_DEVICE`
 - `PERSIAN_ASSISTANT_AUDIO_PLAYER`
+- `PERSIAN_ASSISTANT_VAD_MODEL_PATH`
+- `PERSIAN_ASSISTANT_VAD_THRESHOLD` (default: `0.5`)
+- `PERSIAN_ASSISTANT_VAD_MIN_SPEECH_MS` (default: `150`)
+- `PERSIAN_ASSISTANT_VAD_MIN_SILENCE_MS` (default: `900`)
+- `PERSIAN_ASSISTANT_VAD_PRE_ROLL_MS` (default: `300`)
+- `PERSIAN_ASSISTANT_VAD_POST_ROLL_MS` (default: `200`)
+- `PERSIAN_ASSISTANT_VAD_MAX_UTTERANCE_SEC` (default: `30`)
 - `PERSIAN_ASSISTANT_MAX_LLM_TOKENS`
 - `PERSIAN_ASSISTANT_MAX_LLM_INPUT_TOKENS`
 - `PERSIAN_ASSISTANT_LOG_LEVEL` (default: `INFO`)
