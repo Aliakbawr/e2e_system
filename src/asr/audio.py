@@ -47,18 +47,25 @@ def _dbfs(value: float) -> float:
     return 20.0 * math.log10(max(value, 1e-12))
 
 
-def _low_level_gain(audio: np.ndarray) -> tuple[np.ndarray, float]:
+def _low_level_gain(
+    audio: np.ndarray,
+    *,
+    threshold_dbfs: float = LOW_LEVEL_THRESHOLD_DBFS,
+    target_rms_dbfs: float = TARGET_RMS_DBFS,
+    max_gain_db: float = MAX_GAIN_DB,
+    peak_headroom_dbfs: float = PEAK_HEADROOM_DBFS,
+) -> tuple[np.ndarray, float]:
     rms = float(np.sqrt(np.mean(np.square(audio, dtype=np.float64))))
     rms_dbfs = _dbfs(rms)
-    if rms_dbfs >= LOW_LEVEL_THRESHOLD_DBFS or rms == 0.0:
+    if rms_dbfs >= threshold_dbfs or rms == 0.0:
         return audio, 0.0
 
     peak = float(np.max(np.abs(audio)))
     peak_dbfs = _dbfs(peak)
     gain_db = min(
-        TARGET_RMS_DBFS - rms_dbfs,
-        MAX_GAIN_DB,
-        PEAK_HEADROOM_DBFS - peak_dbfs,
+        target_rms_dbfs - rms_dbfs,
+        max_gain_db,
+        peak_headroom_dbfs - peak_dbfs,
     )
     if gain_db <= 0.0:
         return audio, 0.0
@@ -69,6 +76,11 @@ def prepare_audio_file(
     audio_path: str | Path,
     target_rate: int,
     profile: str = "none",
+    *,
+    threshold_dbfs: float = LOW_LEVEL_THRESHOLD_DBFS,
+    target_rms_dbfs: float = TARGET_RMS_DBFS,
+    max_gain_db: float = MAX_GAIN_DB,
+    peak_headroom_dbfs: float = PEAK_HEADROOM_DBFS,
 ) -> PreparedAudio:
     """Read a file and create mono PCM16 for one explicit ablation profile."""
     if profile not in SUPPORTED_PROFILES:
@@ -107,7 +119,13 @@ def prepare_audio_file(
     input_rms = float(np.sqrt(np.mean(np.square(audio, dtype=np.float64))))
     gain_db = 0.0
     if profile == "low_level_gain":
-        audio, gain_db = _low_level_gain(audio)
+        audio, gain_db = _low_level_gain(
+            audio,
+            threshold_dbfs=threshold_dbfs,
+            target_rms_dbfs=target_rms_dbfs,
+            max_gain_db=max_gain_db,
+            peak_headroom_dbfs=peak_headroom_dbfs,
+        )
 
     audio = np.clip(audio, -1.0, 1.0)
     output_rms = float(np.sqrt(np.mean(np.square(audio, dtype=np.float64))))

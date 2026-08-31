@@ -1,0 +1,25 @@
+{
+  "selection_protocol": "minimum development corpus WER; answer-span rate and fewer modified recordings break ties",
+  "safety_constraints": {
+    "max_gain_db": 40.0,
+    "peak_headroom_dbfs": -1.0
+  },
+  "selected_on_development": {
+    "split": "development",
+    "low_level_threshold_dbfs": -40.0,
+    "target_rms_dbfs": -18.0,
+    "recordings": 517,
+    "preprocessing_applied": 167,
+    "corpus_wer": 0.12585434833843978,
+    "answer_span_rate": 0.6827852998065764
+  },
+  "frozen_held_out_result": {
+    "split": "held_out",
+    "low_level_threshold_dbfs": -40.0,
+    "target_rms_dbfs": -18.0,
+    "recordings": 252,
+    "preprocessing_applied": 86,
+    "corpus_wer": 0.11991773453567474,
+    "answer_span_rate": 0.6349206349206349
+  }
+}

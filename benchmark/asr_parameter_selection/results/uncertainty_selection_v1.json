@@ -1,0 +1,115 @@
+{
+  "cohort": {
+    "requested_recordings": 769,
+    "aligned_recordings": 753,
+    "excluded_decoder_drift": 16,
+    "excluded_files": [
+      {
+        "file_name": "7480590934088457574.wav",
+        "reason": "RuntimeError: primary decoder no longer reproduces frozen transcript"
+      },
+      {
+        "file_name": "6038523943355594522.wav",
+        "reason": "RuntimeError: primary decoder no longer reproduces frozen transcript"
+      },
+      {
+        "file_name": "12213736568102603713.wav",
+        "reason": "RuntimeError: primary decoder no longer reproduces frozen transcript"
+      },
+      {
+        "file_name": "14305450628562851954.wav",
+        "reason": "RuntimeError: primary decoder no longer reproduces frozen transcript"
+      },
+      {
+        "file_name": "2026006993333182018.wav",
+        "reason": "RuntimeError: primary decoder no longer reproduces frozen transcript"
+      },
+      {
+        "file_name": "3330099294705778339.wav",
+        "reason": "RuntimeError: primary decoder no longer reproduces frozen transcript"
+      },
+      {
+        "file_name": "7611514232975915816.wav",
+        "reason": "RuntimeError: primary decoder no longer reproduces frozen transcript"
+      },
+      {
+        "file_name": "13123326374705281492.wav",
+        "reason": "RuntimeError: primary decoder no longer reproduces frozen transcript"
+      },
+      {
+        "file_name": "16394093035607990760.wav",
+        "reason": "RuntimeError: primary decoder no longer reproduces frozen transcript"
+      },
+      {
+        "file_name": "8168878328915561042.wav",
+        "reason": "RuntimeError: primary decoder no longer reproduces frozen transcript"
+      },
+      {
+        "file_name": "5449622817769320337.wav",
+        "reason": "RuntimeError: primary decoder no longer reproduces frozen transcript"
+      },
+      {
+        "file_name": "5886023798121814602.wav",
+        "reason": "RuntimeError: primary decoder no longer reproduces frozen transcript"
+      },
+      {
+        "file_name": "15514305145076728000.wav",
+        "reason": "RuntimeError: primary decoder no longer reproduces frozen transcript"
+      },
+      {
+        "file_name": "8132249247444339159.wav",
+        "reason": "RuntimeError: primary decoder no longer reproduces frozen transcript"
+      },
+      {
+        "file_name": "16189694501855319771.wav",
+        "reason": "RuntimeError: primary decoder no longer reproduces frozen transcript"
+      },
+      {
+        "file_name": "12452321155225633533.wav",
+        "reason": "RuntimeError: primary decoder no longer reproduces frozen transcript"
+      }
+    ]
+  },
+  "selection_rule": {
+    "development_only": true,
+    "max_clarification_rate": 0.1,
+    "max_unnecessary_clarification_rate": 0.05,
+    "ranking": [
+      "maximize oracle answer-span rate",
+      "minimize oracle corpus WER",
+      "minimize unnecessary clarifications",
+      "minimize clarification rate"
+    ]
+  },
+  "selected_on_development": {
+    "split": "development",
+    "word_confidence_threshold": 0.45,
+    "alternative_score_gap": 0.5,
+    "recordings": 505,
+    "baseline_corpus_wer": 0.12511077096592282,
+    "oracle_corpus_wer": 0.12414404253605091,
+    "baseline_answer_span_rate": 0.6811881188118812,
+    "oracle_answer_span_rate": 0.6851485148514852,
+    "clarification_rate": 0.07128712871287128,
+    "useful_clarification_rate": 0.023762376237623763,
+    "unnecessary_clarification_rate": 0.047524752475247525,
+    "opportunity_recall": 0.22641509433962265,
+    "clarification_precision": 0.3333333333333333
+  },
+  "frozen_held_out_result": {
+    "split": "held_out",
+    "word_confidence_threshold": 0.45,
+    "alternative_score_gap": 0.5,
+    "recordings": 248,
+    "baseline_corpus_wer": 0.12002577734815531,
+    "oracle_corpus_wer": 0.11857580151441921,
+    "baseline_answer_span_rate": 0.6370967741935484,
+    "oracle_answer_span_rate": 0.6451612903225806,
+    "clarification_rate": 0.11693548387096774,
+    "useful_clarification_rate": 0.03225806451612903,
+    "unnecessary_clarification_rate": 0.0846774193548387,
+    "opportunity_recall": 0.25,
+    "clarification_precision": 0.27586206896551724
+  },
+  "oracle_assumption": "When clarification fires, the user is assumed to choose the eligible transcript that preserves the answer span and then minimizes WER."
+}

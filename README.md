@@ -55,6 +55,10 @@ python -m scripts.push_to_talk_chat
 python -m scripts.record_mic
 ```
 
+Reproducible development-grid tuning and held-out evaluation for the ASR audio
+and uncertainty parameters is documented in
+[`benchmark/asr_parameter_selection/README.md`](benchmark/asr_parameter_selection/README.md).
+
 ## Configuration
 
 The defaults live in `config/settings.py`. These environment variables can override machine-specific paths and devices:
