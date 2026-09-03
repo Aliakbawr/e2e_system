@@ -8,6 +8,9 @@ microphone -> Silero VAD -> Vosk Persian ASR -> Gemma 2 9B -> Piper Persian TTS 
 
 Research evaluations are isolated under [`benchmark/`](benchmark/README.md). The rest of this repository is the deployable chatbot application.
 
+The standalone Persian TTS quality, intelligibility, and runtime comparison is
+documented in [`benchmark/tts/README.md`](benchmark/tts/README.md).
+
 ## Runtime layout
 
 | Path | Responsibility |
