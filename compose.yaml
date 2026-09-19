@@ -1,0 +1,30 @@
+services:
+  assistant:
+    image: persian-speech-chatbot:local
+    build:
+      context: .
+      target: runtime
+      args:
+        PYTORCH_INDEX_URL: ${PYTORCH_INDEX_URL:-https://download.pytorch.org/whl/cpu}
+        APP_UID: ${HOST_UID:-1000}
+        APP_GID: ${HOST_GID:-1000}
+    init: true
+    stdin_open: true
+    tty: true
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:exec,mode=1777
+    volumes:
+      - type: bind
+        source: ${MODEL_DIR:-./models}
+        target: /app/models
+        read_only: true
+      - type: bind
+        source: ${DATA_DIR:-./data}
+        target: /app/data
+    environment:
+      PERSIAN_ASSISTANT_MIC_DEVICE: ${PERSIAN_ASSISTANT_MIC_DEVICE:-0}
+      PERSIAN_ASSISTANT_LOG_LEVEL: ${PERSIAN_ASSISTANT_LOG_LEVEL:-INFO}
+

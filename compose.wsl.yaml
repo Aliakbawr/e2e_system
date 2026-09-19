@@ -1,0 +1,10 @@
+services:
+  assistant:
+    volumes:
+      - type: bind
+        source: /mnt/wslg
+        target: /mnt/wslg
+    environment:
+      PULSE_SERVER: unix:/mnt/wslg/PulseServer
+      PERSIAN_ASSISTANT_AUDIO_PLAYER: paplay
+

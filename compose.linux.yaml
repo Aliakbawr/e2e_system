@@ -1,0 +1,9 @@
+services:
+  assistant:
+    devices:
+      - /dev/snd:/dev/snd
+    group_add:
+      - ${AUDIO_GID:-29}
+    environment:
+      PERSIAN_ASSISTANT_AUDIO_PLAYER: aplay
+

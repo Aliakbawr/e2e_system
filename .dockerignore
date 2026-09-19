@@ -1,0 +1,39 @@
+.git
+.gitignore
+.venv
+venv
+**/__pycache__
+**/*.py[cod]
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+
+# Runtime assets are bind-mounted and must not make the image/context enormous.
+models
+data
+
+# Research and authoring artifacts are not needed by the deployed chatbot.
+benchmark/**
+!benchmark/__init__.py
+!benchmark/asr_parameter_selection/
+benchmark/asr_parameter_selection/**
+!benchmark/asr_parameter_selection/__init__.py
+!benchmark/asr_parameter_selection/common.py
+!benchmark/asr_llm_error_propagation/
+benchmark/asr_llm_error_propagation/**
+!benchmark/asr_llm_error_propagation/__init__.py
+!benchmark/asr_llm_error_propagation/prepare_downstream_eval.py
+!benchmark/asr_llm_error_propagation/asr/
+benchmark/asr_llm_error_propagation/asr/**
+!benchmark/asr_llm_error_propagation/asr/__init__.py
+!benchmark/asr_llm_error_propagation/asr/run_fleurs_fa_ir_asr.py
+report
+*.pptx
+*.ipynb
+
+# Local configuration and generated files.
+.env
+.env.*
+!.env.example
+*.log
+outputs
